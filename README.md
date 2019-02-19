@@ -10,9 +10,7 @@ and provide an indication of the expected average environmental conditions durin
 relative to the average conditions experienced during the most recent climate period. In so doing, the water
 sector will join the growing list of environmental sectors for which seasonal climate forecasts are showing
 strong potential to inform management; e.g., mitigating fire risk in Mediterranean shrubland (Bedia et al., 2018),
-and reducing southern blue-fin tuna (Thunnus maccoyii) by-catch in the Southern Ocean (Hobday et al., 2011).
-
-Authors: A. S. French, E. de Eyto
+and reducing southern blue-fin tuna (Thunnus maccoyii) by-catch in the Southern Ocean (Hobday et al., 2011). By: A. S. French, E. de Eyto
 
 Case studies:
 
