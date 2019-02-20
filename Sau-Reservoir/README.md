@@ -18,7 +18,6 @@ water quality deteriorations episodes and can even give rise to cyanobacterial
 blooms or to increase the dissolved organic carbon making the reservoir sensitive
 to both droughts and floods.
 
-![My image](https://github.com/dmbettin/WATExR/blob/master/fig1_characteristic.png s48)
 <img src="https://github.com/dmbettin/WATExR/blob/master/fig1_characteristic.png" width="100" height="100">
 
 Characteristics of Sau Reservoir:
