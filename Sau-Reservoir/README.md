@@ -1,4 +1,6 @@
+<p align="center">
 **Sau Reservoir description**
+</p>
 
 The Sau Reservoir is located in the North-East of Spain near Barcelona.
 The reservoir is on the middle stretch of the Ter river catchment and 
@@ -7,7 +9,9 @@ the main water withdrawal source for treatment and human consumption for
 Barcelona metropolitan area . The main purposes of the chain of reservoirs
 are water supply, flood protection and recreation.
 
+<p align="center">
 <img src="https://github.com/dmbettin/WATExR/blob/master/fig1_characteristic.png" width="30%">
+</p>
 
 The canyon-like reservoir is characterized as eutrophic and monomictic,
 mainly stratified from March to November-December. It receives water from 
