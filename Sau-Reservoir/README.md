@@ -23,8 +23,6 @@ water quality deteriorations episodes and can even give rise to cyanobacterial
 blooms or to increase the dissolved organic carbon making the reservoir sensitive
 to both droughts and floods.
 
-
-
 Characteristics of Sau Reservoir:
 
 - Altitude bottom: 384.6 m.
@@ -57,7 +55,9 @@ simulated according to historical data provided by the stakeholders.
 5. The lake model (GOTM) is one dimensional and it simulates vertical turbulent fluxes
 of momentum, heat and dissolved and particulate matter.
 
-
+<p align="center">
+<img src="https://github.com/dmbettin/WATExR/blob/master/fig3.png" width="40%">
+</p>
 
 
 
