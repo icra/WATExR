@@ -1,6 +1,5 @@
-<p align="center">
+
 **Sau Reservoir description**
-</p>
 
 The Sau Reservoir is located in the North-East of Spain near Barcelona.
 The reservoir is on the middle stretch of the Ter river catchment and 
