@@ -7,6 +7,8 @@ the main water withdrawal source for treatment and human consumption for
 Barcelona metropolitan area . The main purposes of the chain of reservoirs
 are water supply, flood protection and recreation.
 
+<img src="https://github.com/dmbettin/WATExR/blob/master/fig1_characteristic.png" width="30%">
+
 The canyon-like reservoir is characterized as eutrophic and monomictic,
 mainly stratified from March to November-December. It receives water from 
 a mix of land cover types including: densely populated areas, productive 
@@ -18,7 +20,7 @@ water quality deteriorations episodes and can even give rise to cyanobacterial
 blooms or to increase the dissolved organic carbon making the reservoir sensitive
 to both droughts and floods.
 
-<img src="https://github.com/dmbettin/WATExR/blob/master/fig1_characteristic.png" width="100" height="100">
+
 
 Characteristics of Sau Reservoir:
 
