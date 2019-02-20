@@ -5,7 +5,7 @@ the water sector within a user-friendly software environment (e.g., QGIS). The t
 of under-the-hood lake, catchment and fish phenology models to provide stakeholders 
 (e.g., reservoir managers/educators/fish stock assessors) with predictions of aquatic phenomena at a 
 seasonal time-scale. Using the tools, stakeholders will have access to probabilistic aquatic forecasts 
-driven by state-of-the-art seasonal climate projections (see Deliverable 2.2). The tools will update monthly
+driven by state-of-the-art seasonal climate projections. The tools will update monthly
 and provide an indication of the expected average environmental conditions during the impending 3 to 9 months
 relative to the average conditions experienced during the most recent climate period. In so doing, the water
 sector will join the growing list of environmental sectors for which seasonal climate forecasts are showing
