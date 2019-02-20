@@ -22,13 +22,13 @@ to both droughts and floods.
 
 Characteristics of Sau Reservoir:
 
--Altitude bottom: 384.6 m.
--Surface area (Full capacity): 580 ha
--Volume (Full capacity): 168 hm3
--Retention time: 0.2 years
--Mean depth: 40 m
--Maximum depth: 75 m
--Mixing regime: monomictic
+- Altitude bottom: 384.6 m.
+- Surface area (Full capacity): 580 ha
+- Volume (Full capacity): 168 hm3
+- Retention time: 0.2 years
+- Mean depth: 40 m
+- Maximum depth: 75 m
+- Mixing regime: monomictic
 
 Management issues:
 1. High concentration of dissolved organic carbon during extreme events
@@ -36,7 +36,6 @@ Management issues:
 water treatment (e. g., active carbon).
 3. Occurrence of cyanobacterial blooms during hot summers.
 
-Work Flow: 
 The main concept for an integrated modeling of the system and a management tool 
 for the stakeholder can be summarized by:
 
