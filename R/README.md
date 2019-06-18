@@ -2,7 +2,7 @@
 
 ## Climate scripts
 
-<img src="figs/fig_hindcast_workflow_UNICAN.png" />
+<img src="/figs/fig_hindcast_workflow_UNICAN.png" />
 
   - **observations.R**: to load observational gridded data (e.g. EWEMBI dataset) for the entire period and to export the data  in the appropriate format (for catchment and lake  models)
   - **reanalysis.R**: to load reanalysis gridded data (e.g. ERA-Interim) for the warm up period, to bias correct the data and to export the data  in the appropriate format (for catchment and lake  models)
