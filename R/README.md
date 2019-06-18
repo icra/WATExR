@@ -9,6 +9,6 @@
   - **validation.R**: to produce tercile plots.
   - **post-process.R**: to bind the reanalysis time series to the 4 months of the seasonal forecast (this binding is performed for each year in the seasonal forecast).
   
-These scripts are tailored to the consecution of the following workflow:
+These scripts are tailored to follow the workflow shown in the figure below:
 
 <img src="/figs/fig_hindcast_workflow_UNICAN.jpg" />
