@@ -76,7 +76,7 @@ dataset <- "System4_seasonal_15" # or "CFSv2_seasonal"
 
 # Login in the TAP-UDG the climate4R libraries 
 # More details about UDG in https://doi.org/10.1016/j.cliser.2017.07.001
-loginUDG("WATExR", "1234567890")
+loginUDG("", "")
 
 # Check available variables in the dataset (System4)  
 di <- dataInventory("http://www.meteo.unican.es/tds5/dodsC/system4/System4_Seasonal_15Members.ncml") # or "http://meteo.unican.es/tds5/dodsC/cfsrr/CFSv2_Seasonal.ncml"
