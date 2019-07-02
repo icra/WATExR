@@ -78,7 +78,7 @@ dataset <- "PIK_Obs-EWEMBI"
 
 # Login in the TAP-UDG the climate4R libraries 
 # More details about UDG in https://doi.org/10.1016/j.cliser.2017.07.001
-loginUDG("WATExR", "1234567890")
+loginUDG("", "")
 
 # Check available variables in the dataset (EWEMBI)  
 di <- dataInventory(dataset)

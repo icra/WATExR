@@ -4,7 +4,7 @@ library(loadeR.2nc)
 library(transformeR)
 library(abind)
 
-loginUDG("WATExR", "1234567890")
+loginUDG("", "")
 
 # lakes ---------------------------------------------------------
 di <- dataInventory("/home/maialen/Descargas/pctlake.nc4")
