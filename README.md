@@ -18,7 +18,7 @@ Mt Bold reservoir
 
 Burrishoole catchment
 
-**Sau reservoir (available data)**
+Sau reservoir (available workflow)
 
 Lake Filsø/Lake Arreskov catchments
 
