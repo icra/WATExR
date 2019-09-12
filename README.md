@@ -18,7 +18,7 @@ Mt Bold reservoir
 
 Burrishoole catchment
 
-Sau reservoir 
+Sau reservoir and Ter River
 
 Lake Filsø/Lake Arreskov catchments
 
