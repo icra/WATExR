@@ -1,4 +1,4 @@
-#How to use
+# How to use
 
 The .cpp and .bat (or .sh if you are on Linux) file should be put in the Applications/SimplyQ folder of your [Mobius](https://github.com/NIVANorge/Mobius) download before compiling. Then copy the .dll (or .so) file back here when you have compiled.
 
