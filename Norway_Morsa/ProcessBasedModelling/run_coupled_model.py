@@ -70,7 +70,7 @@ inflow_vanemfjord_temp = (store_outflow*store_outflow_temp + flow_vanem*inflow_t
 vanem_in = pd.DataFrame({
 	'Date'  : dates,
 	'Flow'  : inflow_vanemfjord,
-	'Temp'  : inflow_vanemfjord_temperature,
+	'Temp'  : inflow_vanemfjord_temp,
 })
 
 vanem_in.set_index('Date', inplace=True)
