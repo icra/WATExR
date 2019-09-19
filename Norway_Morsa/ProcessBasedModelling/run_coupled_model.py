@@ -48,7 +48,7 @@ os.chdir('store')
 
 store_in.to_csv('store_inflow.dat', sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
 
-os.system('gotm.exe')
+os.system('gotm.exe') #or maybe '../gotm.exe' if you just want to have one in the top folder
 
 # Read output from Storefjord and create input for Vanemfjord
 
@@ -82,5 +82,5 @@ vanem_in.to_csv('vanem_inflow.dat', sep='\t', header=False, date_format='%Y-%m-%
 os.system('gotm.exe')
 
 
-
+#TODO process outputs of vanemfjorden run?
 
