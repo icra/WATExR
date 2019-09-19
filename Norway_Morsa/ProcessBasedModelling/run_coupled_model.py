@@ -6,6 +6,7 @@ import imp
 import pandas as pd
 import csv
 from netCDF4 import Dataset
+import os
 
 wrapper_fpath = (r'mobius.py')               #This needs to point to your Mobius/PythonWrapper/mobius.py (or just copy it to this folder)
 wr = imp.load_source('mobius', wrapper_fpath)
@@ -43,11 +44,11 @@ store_in = pd.DataFrame({
 
 store_in.set_index('Date', inplace=True)
 
+os.chdir('store')
+
 store_in.to_csv('store_inflow.dat', sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
 
-#TODO: Run GOTM here (with Storefjord parameters)
-
-#TODO: Safe copy the results to somewhere, or maybe just some selected timeseries?
+os.system('gotm.exe')
 
 # Read output from Storefjord and create input for Vanemfjord
 
@@ -74,9 +75,11 @@ vanem_in = pd.DataFrame({
 
 vanem_in.set_index('Date', inplace=True)
 
+os.chdir('../vanem')
+
 vanem_in.to_csv('vanem_inflow.dat', sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
 
-#TODO: Run GOTM again (with Vanemfjord parameters)
+os.system('gotm.exe')
 
 
 
