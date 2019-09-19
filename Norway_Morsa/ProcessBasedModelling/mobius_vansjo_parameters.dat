@@ -1,7 +1,7 @@
 # Parameter file generated for model SimplyQ with water temperature, containing modules (SimplyQ V1.0, INCA water temperature V1.0) at 2019-09-17 12:39:30
 
 index_sets:
-"Reaches" : {"Kure" {"Vaaler" "Kure"} "Storefjord" "Vanemfjord"}
+"Reaches" : {"Kure" {"Vaaler" "Kure"} "Store" "Vanem"}
 "Landscape units" : {"All"}
 
 parameters:
