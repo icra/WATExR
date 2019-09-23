@@ -15,7 +15,7 @@ wr.initialize('simplyq_with_watertemp.dll')
 
 
 #NOTE: You should set up parameter files for mobius and the GOTM lakes so that the start dates and time ranges match!
-dataset = wr.DataSet.setup_from_parameter_and_input_files('mobius_vansjo_parameters.dat', 'mobius_vansjo_inputs.dat')
+dataset = wr.DataSet.setup_from_parameter_and_input_files('SimplyQ\mobius_vansjo_parameters.dat', 'SimplyQ\mobius_vansjo_inputs.dat')
 
 dataset.run_model()
 
@@ -44,9 +44,11 @@ store_in = pd.DataFrame({
 
 store_in.set_index('Date', inplace=True)
 
-os.chdir('store')
+#os.chdir('store')
 
 store_in.to_csv('store_inflow.dat', sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
+
+exit()
 
 os.system('gotm.exe') #or maybe '../gotm.exe' if you just want to have one in the top folder
 
