@@ -1,7 +1,7 @@
 # Parameter file generated for model SimplyQ with water temperature, containing modules (SimplyQ V1.0, INCA water temperature V1.0) at 2019-09-17 12:39:30
 
 index_sets:
-"Reaches" : {"Kure" {"Vaaler" "Kure"} "Store" "Vanem"}
+"Reaches" : {"Kure" {"Vaaler" "Kure"} "Storefjord" "Vanemfjord"}
 "Landscape units" : {"All"}
 
 parameters:
@@ -44,7 +44,7 @@ parameters:
 
 ###################### "Reaches" ######################
 "Catchment area" :     #(km^2) [0, 10000]
-304.4 32.41 243.9 58.3
+304.4 31.4 252.9 54.3
 
 "Reach length" :     #(m) [0, 10000000] This is divided by two for headwater reaches in the model to calculate the average reach length travelled by water. If this is inappropriate for your headwater reach, adjust this parameter accordingly
 46000 13000 15000 5000

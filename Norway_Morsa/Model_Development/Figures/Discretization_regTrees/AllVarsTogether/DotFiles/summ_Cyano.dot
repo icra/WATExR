@@ -1,24 +1,20 @@
 digraph Tree {
 node [shape=box] ;
-0 [label="colour <= 43.2\nmse = 0.539\nsamples = 19\nvalue = 0.657"] ;
-1 [label="mse = 0.245\nsamples = 3\nvalue = 1.982"] ;
+0 [label="chla <= 17.419\nmse = 0.443\nsamples = 18\nvalue = 0.576"] ;
+1 [label="chla <= 16.03\nmse = 0.018\nsamples = 10\nvalue = 0.135"] ;
 0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
-2 [label="chla <= 17.419\nmse = 0.204\nsamples = 16\nvalue = 0.409"] ;
+5 [label="cyano_prevSummer <= 0.1\nmse = 0.002\nsamples = 7\nvalue = 0.066"] ;
+1 -> 5 ;
+7 [label="mse = 0.002\nsamples = 4\nvalue = 0.055"] ;
+5 -> 7 ;
+8 [label="mse = 0.001\nsamples = 3\nvalue = 0.081"] ;
+5 -> 8 ;
+6 [label="mse = 0.02\nsamples = 3\nvalue = 0.295"] ;
+1 -> 6 ;
+2 [label="colour <= 50.667\nmse = 0.428\nsamples = 8\nvalue = 1.127"] ;
 0 -> 2 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
-3 [label="chla <= 16.03\nmse = 0.018\nsamples = 10\nvalue = 0.135"] ;
+3 [label="mse = 0.59\nsamples = 3\nvalue = 1.49"] ;
 2 -> 3 ;
-7 [label="colour <= 63.212\nmse = 0.002\nsamples = 7\nvalue = 0.066"] ;
-3 -> 7 ;
-9 [label="mse = 0.001\nsamples = 4\nvalue = 0.055"] ;
-7 -> 9 ;
-10 [label="mse = 0.002\nsamples = 3\nvalue = 0.081"] ;
-7 -> 10 ;
-8 [label="mse = 0.02\nsamples = 3\nvalue = 0.295"] ;
-3 -> 8 ;
-4 [label="WindDays_under_Q0.4 <= 28.5\nmse = 0.18\nsamples = 6\nvalue = 0.865"] ;
+4 [label="mse = 0.205\nsamples = 5\nvalue = 0.909"] ;
 2 -> 4 ;
-5 [label="mse = 0.023\nsamples = 3\nvalue = 0.506"] ;
-4 -> 5 ;
-6 [label="mse = 0.08\nsamples = 3\nvalue = 1.225"] ;
-4 -> 6 ;
 }
