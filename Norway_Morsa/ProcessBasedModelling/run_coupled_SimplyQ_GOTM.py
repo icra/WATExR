@@ -7,15 +7,15 @@ import pandas as pd
 import csv
 from netCDF4 import Dataset
 import os
+from subprocess import Popen, PIPE
 
-wrapper_fpath = (r'mobius.py')               #This needs to point to your Mobius/PythonWrapper/mobius.py (or just copy it to this folder)
-wr = imp.load_source('mobius', wrapper_fpath)
-wr.initialize('simplyq_with_watertemp.dll')
+wr = imp.load_source('mobius', 'mobius.py')
+wr.initialize('SimplyQ/simplyq_with_watertemp.so')
 
 
 
 #NOTE: You should set up parameter files for mobius and the GOTM lakes so that the start dates and time ranges match!
-dataset = wr.DataSet.setup_from_parameter_and_input_files('SimplyQ\mobius_vansjo_parameters.dat', 'SimplyQ\mobius_vansjo_inputs.dat')
+dataset = wr.DataSet.setup_from_parameter_and_input_files('SimplyQ/mobius_vansjo_parameters.dat', 'SimplyQ/mobius_vansjo_inputs.dat')
 
 dataset.run_model()
 
@@ -44,13 +44,13 @@ store_in = pd.DataFrame({
 
 store_in.set_index('Date', inplace=True)
 
-#os.chdir('store')
+os.chdir('store')
 
 store_in.to_csv('store_inflow.dat', sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
 
-exit()
 
-os.system('gotm.exe') #or maybe '../gotm.exe' if you just want to have one in the top folder
+proc = Popen(['./gotm'], stdout=PIPE)
+print(proc.communicate())
 
 # Read output from Storefjord and create input for Vanemfjord
 
@@ -81,7 +81,8 @@ os.chdir('../vanem')
 
 vanem_in.to_csv('vanem_inflow.dat', sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
 
-os.system('gotm.exe')
+proc = Popen(['./gotm'], stdout=PIPE)
+print(proc.communicate())
 
 
 #TODO process outputs of vanemfjorden run?
