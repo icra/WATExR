@@ -8,6 +8,8 @@ import csv
 from netCDF4 import Dataset
 import os
 from subprocess import Popen, PIPE
+import datetime
+import matplotlib.pyplot as plt
 
 wr = imp.load_source('mobius', 'mobius.py')
 wr.initialize('SimplyQ/simplyq_with_watertemp.so')
@@ -60,10 +62,29 @@ store_outflow_temp = np.mean(store_out['/temp'][:, 95:99, 0, 0], 1)
 
 store_water_balance = store_out['/int_water_balance'][:, 0, 0]
 
-store_outflow = np.array(np.diff(store_water_balance, n=1))
-np.insert(store_outflow, 1, store_water_balance[0])
+store_outflow = np.array(np.diff(store_water_balance, n=1)) / 86400.0
+store_outflow = np.insert(store_outflow, 1, 0.0) #What to insert here?
 
 store_out.close()
+
+
+fig,ax = plt.subplots()
+
+start2 = datetime.datetime.strptime('1983-01-04', '%Y-%m-%d')
+range2 = pd.date_range(start=start2, periods=10224, freq='D')
+store_out = pd.DataFrame({
+	'Date' : range2,
+	'Flow out' : store_outflow,
+	#'Temp' : store_outflow_temp,
+})
+store_out.set_index('Date', inplace=True)
+
+store_in.drop(columns='Temp', inplace=True)
+store_in.plot(ax=ax)
+store_out.plot(ax=ax)
+fig.savefig('flows.png')
+
+
 
 inflow_vanemfjord = store_outflow + flow_vanem
 
