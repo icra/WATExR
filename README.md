@@ -18,11 +18,11 @@ Mt Bold reservoir
 
 Burrishoole catchment
 
-Sau reservoir (available workflow)
+Sau reservoir and Ter River
 
 Lake Filsø/Lake Arreskov catchments
 
-Vansjø-Hobøl catchment and Lake Mälaren
+Vansjø-Hobøl catchment and Lake Vansjø
 
 Wupper reservoir
 

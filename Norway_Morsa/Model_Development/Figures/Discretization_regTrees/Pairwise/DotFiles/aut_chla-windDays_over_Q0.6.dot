@@ -1,0 +1,32 @@
+digraph Tree {
+node [shape=box] ;
+0 [label="windDays_over_Q0.6 <= 33.5\nmse = 46.969\nsamples = 37\nvalue = 16.771"] ;
+1 [label="windDays_over_Q0.6 <= 26.5\nmse = 51.6\nsamples = 18\nvalue = 20.101"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+3 [label="mse = 92.828\nsamples = 3\nvalue = 27.342"] ;
+1 -> 3 ;
+4 [label="windDays_over_Q0.6 <= 31.5\nmse = 30.769\nsamples = 15\nvalue = 18.652"] ;
+1 -> 4 ;
+7 [label="windDays_over_Q0.6 <= 30.0\nmse = 34.119\nsamples = 9\nvalue = 16.679"] ;
+4 -> 7 ;
+11 [label="mse = 26.781\nsamples = 5\nvalue = 15.766"] ;
+7 -> 11 ;
+12 [label="mse = 40.946\nsamples = 4\nvalue = 17.821"] ;
+7 -> 12 ;
+8 [label="mse = 11.142\nsamples = 6\nvalue = 21.612"] ;
+4 -> 8 ;
+2 [label="windDays_over_Q0.6 <= 41.5\nmse = 22.131\nsamples = 19\nvalue = 13.617"] ;
+0 -> 2 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+5 [label="windDays_over_Q0.6 <= 34.5\nmse = 17.88\nsamples = 16\nvalue = 14.694"] ;
+2 -> 5 ;
+9 [label="mse = 7.762\nsamples = 4\nvalue = 12.436"] ;
+5 -> 9 ;
+10 [label="windDays_over_Q0.6 <= 37.0\nmse = 18.987\nsamples = 12\nvalue = 15.447"] ;
+5 -> 10 ;
+13 [label="mse = 20.883\nsamples = 5\nvalue = 16.127"] ;
+10 -> 13 ;
+14 [label="mse = 17.066\nsamples = 7\nvalue = 14.961"] ;
+10 -> 14 ;
+6 [label="mse = 5.605\nsamples = 3\nvalue = 7.872"] ;
+2 -> 6 ;
+}

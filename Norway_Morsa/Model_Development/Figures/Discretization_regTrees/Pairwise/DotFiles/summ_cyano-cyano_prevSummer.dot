@@ -1,0 +1,24 @@
+digraph Tree {
+node [shape=box] ;
+0 [label="cyano_prevSummer <= 0.531\nmse = 0.392\nsamples = 22\nvalue = 0.553"] ;
+1 [label="cyano_prevSummer <= 0.225\nmse = 0.034\nsamples = 11\nvalue = 0.151"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+3 [label="cyano_prevSummer <= 0.1\nmse = 0.002\nsamples = 8\nvalue = 0.065"] ;
+1 -> 3 ;
+9 [label="mse = 0.002\nsamples = 5\nvalue = 0.061"] ;
+3 -> 9 ;
+10 [label="mse = 0.001\nsamples = 3\nvalue = 0.073"] ;
+3 -> 10 ;
+4 [label="mse = 0.049\nsamples = 3\nvalue = 0.378"] ;
+1 -> 4 ;
+2 [label="cyano_prevSummer <= 1.137\nmse = 0.428\nsamples = 11\nvalue = 0.954"] ;
+0 -> 2 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+5 [label="mse = 0.937\nsamples = 3\nvalue = 1.15"] ;
+2 -> 5 ;
+6 [label="cyano_prevSummer <= 1.432\nmse = 0.217\nsamples = 8\nvalue = 0.881"] ;
+2 -> 6 ;
+7 [label="mse = 0.102\nsamples = 3\nvalue = 0.637"] ;
+6 -> 7 ;
+8 [label="mse = 0.228\nsamples = 5\nvalue = 1.027"] ;
+6 -> 8 ;
+}
