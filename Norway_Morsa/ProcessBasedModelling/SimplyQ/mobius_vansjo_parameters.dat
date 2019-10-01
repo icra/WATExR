@@ -7,10 +7,10 @@ index_sets:
 parameters:
 ###################### (no index sets) ######################
 "Timesteps" :     #(days) [0, 18446744073709551615]
-8766
+17167
 
 "Start date" :     # [1000-01-01, 3000-12-31]
-1994-01-01
+1971-01-01
 
 "Latitude" :     #(°C) [-90, 90] Used in PET calculation if no PET timeseries was provided in the input data
 59.3
@@ -44,7 +44,7 @@ parameters:
 
 ###################### "Reaches" ######################
 "Catchment area" :     #(km^2) [0, 10000]
-304.4 32.41 243.9 58.3
+304.4 31.4 252.9 54.3
 
 "Reach length" :     #(m) [0, 10000000] This is divided by two for headwater reaches in the model to calculate the average reach length travelled by water. If this is inappropriate for your headwater reach, adjust this parameter accordingly
 46000 13000 15000 5000
