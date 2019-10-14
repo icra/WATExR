@@ -28,7 +28,7 @@ def save_gotm_input_file(name, dates, flow, temperature) :
 	out_data.to_csv(name, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
 
 
-def run_single_coupled_model(dataset, store_result_name, vanem_result_name) :
+def run_single_coupled_model(dataset, store_folder, vanem_folder, store_result_name, vanem_result_name) :
 	start_run = time.time()
 
 	dataset.run_model()
@@ -51,7 +51,7 @@ def run_single_coupled_model(dataset, store_result_name, vanem_result_name) :
 	dates = pd.date_range(start=start_date, periods=timesteps, freq='D')
 
 
-	os.chdir('store')
+	os.chdir(store_folder)
 
 	save_gotm_input_file('store_inflow.dat', dates, inflow_storefjord, inflow_temperature)
 
@@ -73,7 +73,7 @@ def run_single_coupled_model(dataset, store_result_name, vanem_result_name) :
 
 	shutil.copy2('output.nc', '../CoupledRunResults/%s' % store_result_name)
 
-	os.chdir('../vanem')
+	os.chdir('../%s' % vanem_folder)
 
 	save_gotm_input_file('store_outflow.dat', dates, store_outflow, store_outflow_temp)
 	save_gotm_input_file('vanem_subcatchment_outflow.dat', dates, flow_vanem, inflow_temperature)
@@ -89,21 +89,24 @@ def run_single_coupled_model(dataset, store_result_name, vanem_result_name) :
 	print('Elapsed time for a single coupled run: %f' % (end_run - start_run))
 
 
-def run_single_coupled_model_with_input(dataset, store_result_name, vanem_result_name, start_date, air_temperature, precipitation) :
+def run_single_coupled_model_with_input(dataset, store_result_name, vanem_result_name, df) :
 
-	timesteps = len(precipitation)
+	timesteps = len(df['Date'])
+	start_date = df['Date'][0]
 
 	dataset.set_parameter_time('Start date', [], start_date)
 	dataset.set_parameter_uint('Timesteps', [], timesteps)
 
-	dataset.set_input_series('Precipitation', [], precipitation, alignwithresults=True)
-	dataset.set_input_series('Air temperature', [], air_temperature, alignwithresults=True)	
+	dataset.set_input_series('Precipitation', [], df['pr'], alignwithresults=True)
+	dataset.set_input_series('Air temperature', [], df['tas'], alignwithresults=True)	
 
-	#TODO: similarly create input files for gotm
+	#TODO: make temp copy of store and vanem to store_temp, vanem_temp
+	#TODO: modify the met input files in those folders with the data from df
+	
 
-	#TODO: what does GOTM need more apart from air_t, precip?
+	run_single_coupled_model(dataset, 'store_temp', 'vanem_temp', store_result_name, vanem_result_name)
 
-	run_single_coupled_model(dataset, store_result_name, vanem_result_name)
+	#TODO: delete temp folders? Or maybe not needed
 
 
 def renormalize(year, month) :
@@ -133,12 +136,11 @@ def full_scenario_run(dataset) :
 			
 				#TODO: prepare meteorological timeseries, where the warmup part is eraInterim, and the rest is from the scenario
 				
-				#air_temperature=blablabla
-				#precipitation = blablabla
+				#df = blablabla
 
 				#name = '%d_%s_%s' % (year, season, scenario)
 
-				#run_single_coupled_model_with_input('store_%s.nc' % name, 'vanem_%s.nc' % name, start_date, air_temperature, precipitation)
+				#run_single_coupled_model_with_input(dataset, 'store_%s.nc' % name, 'vanem_%s.nc' % name, df)
 
 def single_eraInterim_run(dataset) :
 	
@@ -151,16 +153,13 @@ def single_eraInterim_run(dataset) :
 	mask = (df['Date'] >= '1981-1-1') & (df['Date'] <= '2010-12-31')
 	df = df.loc[mask]
 
-	precipitation   = df['pr']
-	air_temperature = df['tas']
-
-	run_single_coupled_model_run(dataset, 'store_full_eraInterim.nc', 'vanem_full_eraInterim.nc', '1981-1-1', precipitation, air_temperature)
+	run_single_coupled_model_run(dataset, 'store_full_eraInterim.nc', 'vanem_full_eraInterim.nc', df)
 
 
 
 dataset = wr.DataSet.setup_from_parameter_and_input_files('SimplyQ/mobius_vansjo_parameters.dat', 'SimplyQ/mobius_vansjo_inputs.dat')
 
-#run_single_coupled_model(dataset, 'store.nc', 'vanem.nc')
+#run_single_coupled_model(dataset, 'store', 'vanem', 'store.nc', 'vanem.nc')
 #full_scenario_run(dataset)
 single_eraInterim_run(dataset)
 
