@@ -96,9 +96,10 @@ def run_single_coupled_model_with_input(dataset, store_result_name, vanem_result
 
 	timesteps = len(df.index)
 
-	start_date = df['Date'].values[0]
+	start_date = pd.to_datetime(str(df['Date'].values[0])).strftime('%Y-%m-%d')
+	end_date   = pd.to_datetime(str(df['Date'].values[-1])).strftime('%Y-%m-%d')
 
-	dataset.set_parameter_time('Start date', [], pd.to_datetime(str(start_date)).strftime('%Y-%m-%d'))
+	dataset.set_parameter_time('Start date', [], start_date)
 	dataset.set_parameter_uint('Timesteps', [], timesteps)
 
 	dataset.set_input_series('Precipitation', [], df['pr'].values, alignwithresults=True)
@@ -128,10 +129,20 @@ def run_single_coupled_model_with_input(dataset, store_result_name, vanem_result
 	weather_df.to_csv('vanem_temp/weather_van_cc.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)	
 
 	#TODO: update gotmrun.nml to have the correct start date and end date!
+	for filename in ['store_temp/gotmrun.nml', 'vanem_temp/gotmrun.nml']:
+		with open(filename, 'r') as myfile:
+	  		data = myfile.read()
+			data = data.replace('1979-01-01', start_date)   #WARNING: This is kind of volatile if we change start date in the default gotmrun.nml
+			data = data.replace('2015-12-31', end_date)
+			myfile.close()
+			with open(filename, 'w') as myfile :
+				myfile.write(data)
+				myfile.close()
 
 	#run_single_coupled_model(dataset, 'store_temp', 'vanem_temp', store_result_name, vanem_result_name)
 
-	#TODO: delete temp folders? Or maybe not needed
+	os.system('rm -r store_temp')
+	os.system('rm -r vanem_temp')
 
 
 def renormalize(year, month) :
@@ -177,8 +188,10 @@ def single_eraInterim_run(dataset) :
 
 	df['Date'] = [date.replace(hour=12) for date in df['Date']]
 
-	mask = (df['Date'] >= '1981-1-1') & (df['Date'] <= '2010-12-31')
+	mask = (df['Date'] >= '1981-1-1') & (df['Date'] <= '2011-1-1')   #NOTE: The last date is non-inclusive, but I have no idea why ( I use <= .... )
 	df = df.loc[mask]
+
+	#print(df)
 
 	#TODO: df['ps'] has to be corrected for height and temperature and converted to millibars
 
