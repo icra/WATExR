@@ -180,6 +180,7 @@ def single_eraInterim_run(dataset) :
 	mask = (df['Date'] >= '1981-1-1') & (df['Date'] <= '2010-12-31')
 	df = df.loc[mask]
 
+	#TODO: df['ps'] has to be corrected for height and temperature and converted to millibars
 
 	run_single_coupled_model_with_input(dataset, 'store_full_eraInterim.nc', 'vanem_full_eraInterim.nc', df)
 
