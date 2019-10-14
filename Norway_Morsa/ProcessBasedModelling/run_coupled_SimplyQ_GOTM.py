@@ -29,6 +29,9 @@ def save_gotm_input_file(name, dates, flow, temperature) :
 
 
 def run_single_coupled_model(dataset, store_folder, vanem_folder, store_result_name, vanem_result_name) :
+
+	#NOTE: handling of folder structure is not very robust at the moment, so store_folder and vanem_folder can't be nested folders (they have to be in the same top folder as the CoupledRunResults folder	
+
 	start_run = time.time()
 
 	dataset.run_model()
@@ -91,20 +94,42 @@ def run_single_coupled_model(dataset, store_folder, vanem_folder, store_result_n
 
 def run_single_coupled_model_with_input(dataset, store_result_name, vanem_result_name, df) :
 
-	timesteps = len(df['Date'])
-	start_date = df['Date'][0]
+	timesteps = len(df.index)
 
-	dataset.set_parameter_time('Start date', [], start_date)
+	start_date = df['Date'].values[0]
+
+	dataset.set_parameter_time('Start date', [], pd.to_datetime(str(start_date)).strftime('%Y-%m-%d'))
 	dataset.set_parameter_uint('Timesteps', [], timesteps)
 
-	dataset.set_input_series('Precipitation', [], df['pr'], alignwithresults=True)
-	dataset.set_input_series('Air temperature', [], df['tas'], alignwithresults=True)	
+	dataset.set_input_series('Precipitation', [], df['pr'].values, alignwithresults=True)
+	dataset.set_input_series('Air temperature', [], df['tas'].values, alignwithresults=True)	
 
-	#TODO: make temp copy of store and vanem to store_temp, vanem_temp
-	#TODO: modify the met input files in those folders with the data from df
+	# make temp copy of store and vanem to store_temp, vanem_temp
+
+	os.system('cp -r store store_temp')
+	os.system('cp -r vanem vanem_temp')
+
+	# modify the met input files in those folders with the data from df
+
+	precip_df = df[['Date', 'pr']]
+
+	precip_df.to_csv('store_temp/precip_van.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
+	precip_df.to_csv('vanem_temp/precip_van.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
+
+
+	rad_df = df[['Date', 'rsds']]   #TODO: Do we have to add in longwave radiation too?
 	
+	rad_df.to_csv('store_temp/radiation_van.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
+	rad_df.to_csv('vanem_temp/radiation_van.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
 
-	run_single_coupled_model(dataset, 'store_temp', 'vanem_temp', store_result_name, vanem_result_name)
+	weather_df = df[['Date', 'uas', 'vas', 'ps', 'tas', 'hurs', 'cc']]
+
+	weather_df.to_csv('store_temp/weather_van_cc.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
+	weather_df.to_csv('vanem_temp/weather_van_cc.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)	
+
+	#TODO: update gotmrun.nml to have the correct start date and end date!
+
+	#run_single_coupled_model(dataset, 'store_temp', 'vanem_temp', store_result_name, vanem_result_name)
 
 	#TODO: delete temp folders? Or maybe not needed
 
@@ -144,16 +169,19 @@ def full_scenario_run(dataset) :
 
 def single_eraInterim_run(dataset) :
 	
-	df = pd.read_csv('climate_forecast/eraInterim.csv')   #It is actually a hindcast, but anywhoo..
-	
-	df = df.rename(columns={'Unnamed: 0' : 'Date'})
-	df.set_index('Date', inplace=True)
-	#print(df)
+	df = pd.read_csv('climate_forecast/eraInterim.csv', parse_dates=[0,])   #It is actually a hindcast, but anywhoo..
+
+	df = df.rename(columns={'Unnamed: 0': 'Date'})
+
+	#print(df['Date'])
+
+	df['Date'] = [date.replace(hour=12) for date in df['Date']]
 
 	mask = (df['Date'] >= '1981-1-1') & (df['Date'] <= '2010-12-31')
 	df = df.loc[mask]
 
-	run_single_coupled_model_run(dataset, 'store_full_eraInterim.nc', 'vanem_full_eraInterim.nc', df)
+
+	run_single_coupled_model_with_input(dataset, 'store_full_eraInterim.nc', 'vanem_full_eraInterim.nc', df)
 
 
 
