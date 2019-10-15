@@ -118,7 +118,7 @@ def run_single_coupled_model_with_input(dataset, store_result_name, vanem_result
 	precip_df.to_csv('vanem_temp/precip_van.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
 
 
-	rad_df = df[['Date', 'rsds']]   #TODO: Do we have to add in longwave radiation too?
+	rad_df = df[['Date', 'rsds']]
 	
 	rad_df.to_csv('store_temp/radiation_van.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
 	rad_df.to_csv('vanem_temp/radiation_van.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
@@ -139,8 +139,9 @@ def run_single_coupled_model_with_input(dataset, store_result_name, vanem_result
 				myfile.write(data)
 				myfile.close()
 
-	#run_single_coupled_model(dataset, 'store_temp', 'vanem_temp', store_result_name, vanem_result_name)
+	run_single_coupled_model(dataset, 'store_temp', 'vanem_temp', store_result_name, vanem_result_name)
 
+	os.system('cd ..')
 	os.system('rm -r store_temp')
 	os.system('rm -r vanem_temp')
 
@@ -180,20 +181,19 @@ def full_scenario_run(dataset) :
 
 def single_eraInterim_run(dataset) :
 	
-	df = pd.read_csv('climate_forecast/eraInterim.csv', parse_dates=[0,])   #It is actually a hindcast, but anywhoo..
+	df = pd.read_csv('climate_forecast/eraInterim_bias_corrected_with_ewembi.csv', parse_dates=[0,])   #It is actually a hindcast, not a forecast, but anywhoo..
 
 	df = df.rename(columns={'Unnamed: 0': 'Date'})
-
-	#print(df['Date'])
 
 	df['Date'] = [date.replace(hour=12) for date in df['Date']]
 
 	mask = (df['Date'] >= '1981-1-1') & (df['Date'] <= '2011-1-1')   #NOTE: The last date is non-inclusive, but I have no idea why ( I use <= .... )
 	df = df.loc[mask]
 
-	#print(df)
-
-	#TODO: df['ps'] has to be corrected for height and temperature and converted to millibars
+	elevation_coeff = 0.0065*100
+	
+	#correct atmospheric pressure for elevation and temperature
+	df['ps'] = df['ps']*(1.0 - elevation_coeff / (df['tas'] + 273.15 + elevation_coeff))**(-5.257)	
 
 	run_single_coupled_model_with_input(dataset, 'store_full_eraInterim.nc', 'vanem_full_eraInterim.nc', df)
 
