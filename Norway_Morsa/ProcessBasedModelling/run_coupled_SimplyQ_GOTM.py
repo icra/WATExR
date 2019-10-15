@@ -86,6 +86,7 @@ def run_single_coupled_model(dataset, store_folder, vanem_folder, store_result_n
 
 	shutil.copy2('output.nc', '../CoupledRunResults/%s' % vanem_result_name)
 
+	os.chdir('..')
 
 	end_run = time.time()
 
@@ -141,7 +142,6 @@ def run_single_coupled_model_with_input(dataset, store_result_name, vanem_result
 
 	run_single_coupled_model(dataset, 'store_temp', 'vanem_temp', store_result_name, vanem_result_name)
 
-	os.system('cd ..')
 	os.system('rm -r store_temp')
 	os.system('rm -r vanem_temp')
 
