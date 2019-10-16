@@ -183,7 +183,7 @@ def full_scenario_run(dataset) :
 			era_interim_df['Date'] = [date.replace(hour=12) for date in era_interim_df['Date']]
 
 
-			#for scenario_idx, scenario in enumerate(['put', 'a', 'bunch', 'of', 'system4', 'scenario', 'names', 'here']) :
+			for scenario_idx, scenario in enumerate(['put', 'a', 'bunch', 'of', 'system4', 'scenario', 'names', 'here']) :
 			
 				#TODO: prepare meteorological timeseries, where the warmup part is eraInterim, and the rest is from the scenario
 				
@@ -192,7 +192,7 @@ def full_scenario_run(dataset) :
 				
 				scenario_df = blablabla #TODO!!!
 				
-				run_mask = (scenario_df['Date'] >= '%d-%d-%d' % (run_start_year, run_start_month, 1)) & (scenario_df['Date'] >= '%d-%d-%d' % (run_end_year, run_end_month, monthlen(run_end_year, run_end_month))
+				run_mask = (scenario_df['Date'] >= '%d-%d-%d' % (run_start_year, run_start_month, 1)) & (scenario_df['Date'] >= '%d-%d-%d' % (run_end_year, run_end_month, monthlen(run_end_year, run_end_month)))
 				run_df = scenario_df[run_mask]
 				
 				df = pd.concat([warmup_df, run_df], )
@@ -223,7 +223,7 @@ def single_eraInterim_run(dataset) :
 
 
 
-dataset = wr.DataSet.setup_from_parameter_and_input_files('SimplyQ/mobius_vansjo_parameters.dat', 'SimplyQ/mobius_vansjo_inputs.dat')
+dataset = wr.DataSet.setup_from_parameter_and_input_files('SimplyQ/mobius_vansjo_parameters_ddet.dat', 'SimplyQ/mobius_vansjo_inputs.dat')  #Use degree-day-evapotranspiration. It is as good as Thornthwaite, and unlike Thornthwaite it gets properly recomputed if you re-run the same dataset with new inputs.
 
 #run_single_coupled_model(dataset, 'store', 'vanem', 'store.nc', 'vanem.nc')
 #full_scenario_run(dataset)
