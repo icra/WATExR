@@ -12,6 +12,7 @@ import datetime
 import matplotlib.pyplot as plt
 import time
 import shutil
+from calendar import monthrange
 
 wr = imp.load_source('mobius', 'mobius.py')
 wr.initialize('SimplyQ/simplyq_with_watertemp.so')
@@ -129,7 +130,7 @@ def run_single_coupled_model_with_input(dataset, store_result_name, vanem_result
 	weather_df.to_csv('store_temp/weather_van_cc.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)
 	weather_df.to_csv('vanem_temp/weather_van_cc.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE)	
 
-	#TODO: update gotmrun.nml to have the correct start date and end date!
+	# NOTE: Update gotmrun.nml to have correct start_date and end_date
 	for filename in ['store_temp/gotmrun.nml', 'vanem_temp/gotmrun.nml']:
 		with open(filename, 'r') as myfile:
 	  		data = myfile.read()
@@ -166,16 +167,39 @@ def full_scenario_run(dataset) :
 			
 			run_end_year, run_end_month = renormalize(run_start_year, run_start_month + 3)
 
+
+			def monthlen(year, month) :
+				return monthrange(year, month)[1]
+
 			print('%d %s : warmup: (%d-%d-%d) - (%d-%d-%d) run (%d-%d-%d) - (%d-%d-%d)'
-				% (year, season, warmup_start_year, warmup_start_month, 1, warmup_end_year, warmup_end_month, 31, run_start_year, run_start_month, 1, run_end_year, run_end_month, 31))   #TODO: need to select actual end day in month instead of '31'
+				% (year, season, warmup_start_year, warmup_start_month, 1, warmup_end_year, warmup_end_month, monthlen(warmup_end_year, warmup_end_month), run_start_year, run_start_month, 1, run_end_year, run_end_month, monthlen(run_end_year, run_end_month)))
+
+
+
+			era_interim_df = pd.read_csv('climate_forecast/eraInterim_bias_corrected_with_ewembi.csv', parse_dates=[0,])   #It is actually a hindcast, not a forecast, but anywhoo..
+
+			era_interim_df = era_interim_df.rename(columns={'Unnamed: 0': 'Date'})
+
+			era_interim_df['Date'] = [date.replace(hour=12) for date in era_interim_df['Date']]
+
 
 			#for scenario_idx, scenario in enumerate(['put', 'a', 'bunch', 'of', 'system4', 'scenario', 'names', 'here']) :
 			
 				#TODO: prepare meteorological timeseries, where the warmup part is eraInterim, and the rest is from the scenario
 				
-				#df = blablabla
+				warmup_mask = (era_interim_df['Date'] >= '%d-%d-%d' % (warmup_start_year, warmup_start_month, 1)) & (era_interim_df['Date'] <= '%d-%d-%d' % (warmup_end_year, warmup_end_month, monthlen(warmup_end_year, warmup_end_month)))   #TODO: Check inclusivity of last date..
+				warmup_df = era_interim_df[warmup_mask]
+				
+				scenario_df = blablabla #TODO!!!
+				
+				run_mask = (scenario_df['Date'] >= '%d-%d-%d' % (run_start_year, run_start_month, 1)) & (scenario_df['Date'] >= '%d-%d-%d' % (run_end_year, run_end_month, monthlen(run_end_year, run_end_month))
+				run_df = scenario_df[run_mask]
+				
+				df = pd.concat([warmup_df, run_df], )
 
-				#name = '%d_%s_%s' % (year, season, scenario)
+				print(df)
+
+				name = '%d_%s_%s' % (year, season, scenario)
 
 				#run_single_coupled_model_with_input(dataset, 'store_%s.nc' % name, 'vanem_%s.nc' % name, df)
 
