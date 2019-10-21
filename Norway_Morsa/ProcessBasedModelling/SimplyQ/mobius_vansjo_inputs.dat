@@ -11,6 +11,7 @@ additional_timeseries :
 "Observed TDP at Kure"
 "Observed SRP at Kure"
 "Observed PP at Kure"
+"Potential evapotranspiration" #So that Mobius does not choke on that handle if we did not use Thornthwaite
 
 inputs :
 
