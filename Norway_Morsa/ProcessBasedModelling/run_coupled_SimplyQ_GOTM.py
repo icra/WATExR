@@ -155,7 +155,7 @@ def renormalize(year, month) :
 
 def full_scenario_run(dataset) :
 	for year in range(1981, 2011) :   #range is noninclusive in the second argument, so final year is 2010
-		for season_idx, season in enumerate(['MAM', 'JJA', 'SON', 'DJF']):
+		for season_idx, season in enumerate(['spring', 'summer', 'autumn', 'winter']):
 			
 			#start the run 1 year and 1 month before the target season
 
@@ -175,31 +175,37 @@ def full_scenario_run(dataset) :
 				% (year, season, warmup_start_year, warmup_start_month, 1, warmup_end_year, warmup_end_month, monthlen(warmup_end_year, warmup_end_month), run_start_year, run_start_month, 1, run_end_year, run_end_month, monthlen(run_end_year, run_end_month)))
 
 
-
 			era_interim_df = pd.read_csv('climate_forecast/eraInterim_bias_corrected_with_ewembi.csv', parse_dates=[0,])   #It is actually a hindcast, not a forecast, but anywhoo..
-
 			era_interim_df = era_interim_df.rename(columns={'Unnamed: 0': 'Date'})
-
 			era_interim_df['Date'] = [date.replace(hour=12) for date in era_interim_df['Date']]
+			warmup_mask = (era_interim_df['Date'] >= '%d-%d-%d' % (warmup_start_year, warmup_start_month, 1)) & (era_interim_df['Date'] <= '%d-%d-%d' % (warmup_end_year, warmup_end_month, monthlen(warmup_end_year, warmup_end_month)))   #TODO: Check inclusivity of last date..
+			era_interim_df = era_interim_df[warmup_mask]
 
+			scenario_df = pd.read_csv('climate_forecast/system4_%s.csv' % season, parse_dates=[0,])
+			scenario_df = scenario_df.rename(columns={'Unnamed 0': 'Date'})
+			scenario_df['Date'] = [date.replace(hour=12) for date in era_interim_df['Date']]
+			run_mask = (scenario_df['Date'] >= '%d-%d-%d' % (run_start_year, run_start_month, 1)) & (scenario_df['Date'] >= '%d-%d-%d' % (run_end_year, run_end_month, monthlen(run_end_year, run_end_month)))
+			scenario_df = scenario_df[run_mask]
 
-			for scenario_idx, scenario in enumerate(['put', 'a', 'bunch', 'of', 'system4', 'scenario', 'names', 'here']) :
-			
-				#TODO: prepare meteorological timeseries, where the warmup part is eraInterim, and the rest is from the scenario
+			for scenario_idx in range(0, 15) :
 				
-				warmup_mask = (era_interim_df['Date'] >= '%d-%d-%d' % (warmup_start_year, warmup_start_month, 1)) & (era_interim_df['Date'] <= '%d-%d-%d' % (warmup_end_year, warmup_end_month, monthlen(warmup_end_year, warmup_end_month)))   #TODO: Check inclusivity of last date..
-				warmup_df = era_interim_df[warmup_mask]
+				run_df = scenario_df.rename(columns = {
+					'uas_%d' % scenario : 'uas',
+					'vas_%d' % scenario : 'vas',
+					'ps_%d'  % scenario : 'ps',
+					'tas_%d' % scenario : 'tas',
+					'pr_%d'  % scenario : 'pr',
+					'rsds_%d' % scenario : 'rsds',
+					'rlds_%d' % scenario : 'rlds',
+					'hurs_%d' % scenario : 'hurs',
+					'cc_%d'   % scenario : 'cc',
+				})
 				
-				scenario_df = blablabla #TODO!!!
-				
-				run_mask = (scenario_df['Date'] >= '%d-%d-%d' % (run_start_year, run_start_month, 1)) & (scenario_df['Date'] >= '%d-%d-%d' % (run_end_year, run_end_month, monthlen(run_end_year, run_end_month)))
-				run_df = scenario_df[run_mask]
-				
-				df = pd.concat([warmup_df, run_df], )
+				df = pd.concat([era_interim_df, run_df], )
 
 				print(df)
 
-				name = '%d_%s_%s' % (year, season, scenario)
+				name = '%d_%s_%d' % (year, season, scenario_idx)
 
 				#run_single_coupled_model_with_input(dataset, 'store_%s.nc' % name, 'vanem_%s.nc' % name, df)
 
@@ -226,8 +232,8 @@ def single_eraInterim_run(dataset) :
 dataset = wr.DataSet.setup_from_parameter_and_input_files('SimplyQ/mobius_vansjo_parameters_ddet.dat', 'SimplyQ/mobius_vansjo_inputs.dat')  #Use degree-day-evapotranspiration. It is as good as Thornthwaite, and unlike Thornthwaite it gets properly recomputed if you re-run the same dataset with new inputs.
 
 #run_single_coupled_model(dataset, 'store', 'vanem', 'store.nc', 'vanem.nc')
-#full_scenario_run(dataset)
-single_eraInterim_run(dataset)
+full_scenario_run(dataset)
+#single_eraInterim_run(dataset)
 
 
 			
