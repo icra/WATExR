@@ -16,8 +16,8 @@ season <- c(vargs[[2]])
 season <- as.integer(season)
 
 # Output path where the data will be saved (change to your local path).
-dir.data <- '/home/jovyan/projects/watexr/WATExR/Norway_Morsa/Data/Meteorological/05_temporary_forecast_data/' 
-dir.Rdata <- '/home/jovyan/projects/watexr/WATExR/Norway_Morsa/Data/Meteorological/05_temporary_forecast_data/'
+dir.data <- '../../Data/Meteorological/05_temporary_forecast_data/' 
+dir.Rdata <- '../../Data/Meteorological/05_temporary_forecast_data/'
   
 # Define the geographical domain for the Morsa catchment
 latLim <- c(59.31, 59.90) 
@@ -50,7 +50,7 @@ di <- dataInventory("http://www.meteo.unican.es/tds5/dodsC/system4/System4_Seaso
 names(di)
 
 # Path to the observational data (change to your local path).
-dir.Rdata.obs <- "/home/jovyan/projects/watexr/WATExR/Norway_Morsa/Data/Meteorological/RData/PIK_Obs-EWEMBI_1_2_3_4_5_6_7_8_9_10_11_12_uas_vas_ps_tas_pr_rsds_rlds_hurs_petH.rda"
+dir.Rdata.obs <- "../../Data/Meteorological/RData/PIK_Obs-EWEMBI_1_2_3_4_5_6_7_8_9_10_11_12_uas_vas_ps_tas_pr_rsds_rlds_hurs_petH.rda"
 obs.data <- get(load(dir.Rdata.obs))
 
 # Define the variables to be loaded (the same as in the observational data, 
@@ -153,10 +153,10 @@ data.bc <- lapply(1:length(data), function(v)  {
 }) 
 names(data.bc) <- names(data) 
                             
-# save Rdata (*.rda file)
-save(data, file = paste0(dir.Rdata, dataset, "_", paste0(season, collapse = "_"), "_", paste0(names(data), collapse = "_"), "_raw.rda"))
-#save(data.bc.cross, file = paste0(dir.Rdata, dataset, "_", paste0(season, collapse = "_"), "_", paste0(names(data), collapse = "_"), "_BCcross.rda"))
-save(data.bc, file = paste0(dir.Rdata, dataset, "_", paste0(season, collapse = "_"), "_", paste0(names(data), collapse = "_"), "_BC.rda"))
+## save Rdata (*.rda file)
+#save(data, file = paste0(dir.Rdata, dataset, "_", paste0(season, collapse = "_"), "_", paste0(names(data), collapse = "_"), "_raw.rda"))
+##save(data.bc.cross, file = paste0(dir.Rdata, dataset, "_", paste0(season, collapse = "_"), "_", paste0(names(data), collapse = "_"), "_BCcross.rda"))
+#save(data.bc, file = paste0(dir.Rdata, dataset, "_", paste0(season, collapse = "_"), "_", paste0(names(data), collapse = "_"), "_BC.rda"))
 
 ########## BUILD FINAL DATA AND EXPORT ACCORDING TO THE WATExR ARCHIVE DESIGN -----------------------
 ## SEE the proposal for the WATExR Archive Design in:                                            
