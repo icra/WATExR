@@ -44,6 +44,7 @@ def get_seasonal_forecast(year, season):
 
     assert season in months_dict.keys(), "'season' must be one of ('winter', 'spring', early_summer', 'late_summer')."
     assert isinstance(year, int), "'year' must be an integer."
+    assert (year >= 1981) and (year <= 2010), "For the moment, 'year' must be in the range 1981 to 2010."
     
     # Check whether 'temp'folder already contains data
     base_path = r'../../Data/Meteorological/05_temporary_forecast_data/Morsa/CLIMATE'
@@ -54,11 +55,20 @@ def get_seasonal_forecast(year, season):
         print('The folder:\n'
               '    WATExR/Norway_Morsa/Data/Meteorological/05_temporary_forecast_data/Morsa/CLIMATE\n\n'
               'already contains S4 model output.\n')
-        resp = input('Do you want to delete these folders and download new data? (y/n): ')
+        resp = input('These files will be deleted and new data will be downloaded for the specified year and season.\n'
+                     'Do you want to continue? (y/n): ')
         
         if resp in ['y', 'Y', 'yes', 'YES', 'Yes']:
+            # Delete S4 data
             for s4_dir in s4_dirs:
                 shutil.rmtree(os.path.join(base_path, s4_dir))
+                
+            # Delete existing climate_forecast_summary.png to avoid confusion later
+            clim_forecast_png = os.path.join(os.path.dirname(os.path.realpath(__file__)), 
+                                             'forecast_output', 
+                                             'climate_forecast_summary.png')
+            os.remove(clim_forecast_png)
+            
             print('Old data has been deleted.\n')
         
         else:
@@ -599,3 +609,6 @@ def make_forecast_pdf(year, season):
                                 'forecast_output', 
                                 f'morsa_forecast_{season}_{year}')
     doc.generate_pdf(forecast_pdf, clean_tex=True)
+    
+    print('Forecast saved to:\n')
+    print('    ' + forecast_pdf + '.pdf')
