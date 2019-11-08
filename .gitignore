@@ -1,5 +1,5 @@
 .ipynb_checkpoints
 .Rhistory
 .Rproj.user
-.pyc
+*.pyc
 WATExR.Rproj
