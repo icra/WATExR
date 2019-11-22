@@ -329,23 +329,23 @@ def get_colour(res_dict, var):
     
     # Colours for terciles
     if terc_prob > 75:
-        terc_col = '0.125'
+        terc_col = (59/255, 120/255, 255/255)
     elif 50 < terc_prob <= 75:
-        terc_col = '0.375'
+        terc_col = (145/255, 217/255, 250/255)
     elif 35 < terc_prob <= 50:
-        terc_col = '0.575'
+        terc_col = (217/255, 245/255, 252/255)
     else:
-        terc_col = '0.825'
+        terc_col = (212/255, 222/255, 222/255)
         
     # Colours for extremes
     if ext_prob > 75:
-        ext_col = '0.125'
+        ext_col = (59/255, 120/255, 255/255)
     elif 50 < ext_prob <= 75:
-        ext_col = '0.375'
+        ext_col = (145/255, 217/255, 250/255)
     elif 35 < ext_prob <= 50:
-        ext_col = '0.575'
+        ext_col = (217/255, 245/255, 252/255)
     else:
-        ext_col = '0.825'
+        ext_col = (212/255, 222/255, 222/255)
         
     return [terc_col, ext_col]
 
@@ -412,10 +412,10 @@ def make_climate_forecast_png(season, res_dict, perf_df, out_png):
     rect14 = patches.Rectangle((3.35, 1.61), 0.40, 0.28, linewidth=0.5, edgecolor='k', facecolor=get_colour(res_dict, 'pr')[1])
     rect15 = patches.Rectangle((3.35, 1.94), 0.40, 0.28, linewidth=0.5, edgecolor='k', facecolor=get_colour(res_dict, 'tas')[1])
 
-    rect17 = patches.Rectangle((0.10, 0.51), 0.22, 0.22, linewidth=0.5, edgecolor='k', facecolor='0.125')
-    rect16 = patches.Rectangle((0.10, 0.24), 0.22, 0.22, linewidth=0.5, edgecolor='k', facecolor='0.375')
-    rect19 = patches.Rectangle((2.79, 0.51), 0.22, 0.22, linewidth=0.5, edgecolor='k', facecolor='0.575')
-    rect18 = patches.Rectangle((2.79, 0.24), 0.22, 0.22, linewidth=0.5, edgecolor='k', facecolor='0.825')
+    rect17 = patches.Rectangle((0.10, 0.51), 0.22, 0.22, linewidth=0.5, edgecolor='k', facecolor=(59/255, 120/255, 255/255))
+    rect16 = patches.Rectangle((0.10, 0.24), 0.22, 0.22, linewidth=0.5, edgecolor='k', facecolor=(145/255, 217/255, 250/255))
+    rect19 = patches.Rectangle((2.79, 0.51), 0.22, 0.22, linewidth=0.5, edgecolor='k', facecolor=(217/255, 245/255, 252/255))
+    rect18 = patches.Rectangle((2.79, 0.24), 0.22, 0.22, linewidth=0.5, edgecolor='k', facecolor=(212/255, 222/255, 222/255))
 
     # Add the patches to the axes
     rect_list = [rect1, rect2, rect3, rect4, rect5, rect6, rect7, rect8, rect9,
