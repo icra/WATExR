@@ -37,16 +37,16 @@
 ##################################################################################################################################################################
 
 # Install required packages. RUN JUST THE FIRST TIME.
-devtools::install_github(c("SantanderMetGroup/loadeR.java", "SantanderMetGroup/loadeR@devel",
-                           "SantanderMetGroup/transformeR", "SantanderMetGroup/loadeR.ECOMS",  
-                           "SantanderMetGroup/visualizeR", "SantanderMetGroup/convertR",
-                           "SantanderMetGroup/drought4R@devel", "SantanderMetGroup/downscaleR@devel")) 
+# devtools::install_github(c("SantanderMetGroup/loadeR.java", "SantanderMetGroup/loadeR@devel",
+#                            "SantanderMetGroup/transformeR", "SantanderMetGroup/loadeR.ECOMS",  
+#                            "SantanderMetGroup/visualizeR", "SantanderMetGroup/convertR",
+#                            "SantanderMetGroup/drought4R@devel", "SantanderMetGroup/downscaleR@devel")) 
 
 # Load packages. 
 library(loadeR)
 library(transformeR)
-library(loadeR.ECOMS)
-library(visualizeR)
+# library(loadeR.ECOMS)
+# library(visualizeR)
 library(convertR)
 library(drought4R)
 
@@ -67,7 +67,7 @@ latLim <- c(-35.5, -34.25)
 # latLim <- 43.177
 
 # Define the period and the season
-years <- 1981:2010
+years <- 1979:2010
 season <- 1:12 #Full year
 
 # Define the coordinates and name of the lake
@@ -104,7 +104,7 @@ data.interp <- lapply(data.prelim, function(x) interpGrid(x, new.coordinates = l
                                                    bilin.method = "akima"))
 
 #Convert pressure units to millibars with function udConvertGrid from package convertR.
-data.interp$ps <- udConvertGrid(data.interp$ps, new.units = "millibars")
+# data.interp$ps <- udConvertGrid(data.interp$ps, new.units = "millibars")
 
 # Collect some common metadata (e.g. from variable uas)
 dates <- data.interp[[1]]$Dates
@@ -113,6 +113,7 @@ xycoords <- getCoordinates(data.interp[[1]])
 # Compute cloud cover with function rad2cc from package convertR
 clt <- rad2cc(rsds = data.interp$rsds, rlds = data.interp$rlds)
 clt$Variable$varName <- "cc"
+attr(clt$Variable, 'units') <- 'frac'
 
 # Put all variables together
 data <- c(data.interp, "cc" = list(clt))
@@ -150,6 +151,8 @@ save(data, file = paste0(dir.Rdata, dataset, "_", paste0(season, collapse = "_")
 
 # extract the data arrays of all variables from the list
 data_sub <- lapply(data, function(x) x[["Data"]])
+units <- lapply(data, function(x) attributes(x$Variable)$units)
+cnams <- paste0(names(data),'_', units)
 # Remove unwanted variables from output
 # data["rsds"] <- NULL 
 # data["rlds"] <- NULL
@@ -158,6 +161,7 @@ yymmdd <- as.Date(dates$start)
 hhmmss <- format(as.POSIXlt(dates$start), format = "%H:%M:%S")
 datetime = paste(yymmdd, hhmmss)
 df <- data.frame(c(list("DateTime" = datetime)), data_sub)
+colnames(df) <- c("DateTime", cnams)
 
 
 ########### EXPORT DATA ACCORDING TO THE WATExR ARCHIVE DESIGN -----------------------------
@@ -177,7 +181,7 @@ startTime <- format(as.POSIXlt(yymmdd[1]), format = "%Y%m%d")
 endTime <- format(tail(as.POSIXlt(yymmdd), n = 1), format = "%Y%m%d")
 dirName <- paste0(dir.data, lake_id, "/CLIMATE/", lake_id, "_", institution, "_", ClimateModelName, "_", ExperimentName, "_", member, "_", freq, "_", startTime, "-", endTime, "/", sep = "", collapse = NULL)
 dir.create(dirName, showWarnings = TRUE, recursive = TRUE, mode = "0777")
-write.table(df, paste0(dirName,"meteo_file.dat", sep = "", collapse = NULL), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+write.table(df, paste0(dirName,"meteo_file.dat", sep = "", collapse = NULL), sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 
 

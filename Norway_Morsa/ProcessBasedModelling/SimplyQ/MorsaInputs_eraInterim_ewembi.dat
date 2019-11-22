@@ -1,4 +1,4 @@
-start_date : 1979-01-02
+start_date : 1979-01-01
 timesteps : 13880
 
 # Required: "Air temperature", "Precipitation" // Gridded data
