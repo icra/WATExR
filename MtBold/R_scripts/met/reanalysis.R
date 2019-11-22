@@ -67,7 +67,7 @@ latLim <- c(-35.5, -34.25)
 # latLim <- 43.177
 
 # Define the period and the season. If required for the warm up of the lake model, data from 1979 can be loaded. 
-years <- 1981:2010
+years <- 1979:2016
 season <- 1:12 #Full year
 
 # Define the coordinates and name of the lake
@@ -77,6 +77,7 @@ lakename <- "MtBold"
 # Define the dataset 
 ## dataset <- "ECMWF_ERA-Interim-ESD"
 dataset <- "http://meteo.unican.es/tds5/dodsC/interim/interim075_WATExR.ncml"
+# dataset <- "http://meteo.unican.es/tds7/ncss/interim/interim075.ncml"
 
 # Login in the TAP-UDG the climate4R libraries 
 # More details about UDG in https://doi.org/10.1016/j.cliser.2017.07.001
@@ -87,7 +88,7 @@ di <- dataInventory(dataset)
 names(di)
 
 # Path to the observational data (change to your local path).
-dir.Rdata.obs <- "C:\\Users\\mooret\\OneDrive - Dundalk Institute of Technology\\WateXr\\WATExR\\MtBold\\Rdata/PIK_Obs-EWEMBI_1_2_3_4_5_6_7_8_9_10_11_12_uas_vas_ps_tas_tasmax_tasmin_pr_rsds_rlds_hurs_cc_petH.rda"
+dir.Rdata.obs <- "C:\\Users\\mooret\\OneDrive - Dundalk Institute of Technology\\WateXr\\WATExR\\MtBold\\Rdata/"
 
 obs.data <- get(load(dir.Rdata.obs))
 
@@ -281,18 +282,25 @@ save(data.bc, file = paste0(dir.Rdata, "interim075_WATExR_", paste0(season, coll
 
 ########## BUILD FINAL DATA --------------------------------------------------------------
 
-datatoexport <- data.bc.cross
+datatoexport <- get(load("C:\\Users\\mooret\\OneDrive - Dundalk Institute of Technology\\WateXr\\WATExR\\MtBold\\Rdata/interim075_WATExR_1_2_3_4_5_6_7_8_9_10_11_12_uas_vas_ps_tas_tasmax_tasmin_pr_rsds_rlds_hurs_cc_wss_BC.rda"))
 
 # extract the data arrays of all variables from the list
-data <- lapply(datatoexport, function(x) x[["Data"]])
+data_sub <- lapply(datatoexport, function(x) x[["Data"]])
+units <- lapply(datatoexport, function(x) attributes(x$Variable)$units)
+units$cc <- 'frac'
+cnams <- paste0(names(datatoexport),'_', units)
+dates <- datatoexport[[1]]$Dates
 
 # Remove unwanted variables from output
 # data["rsds"] <- NULL 
 # data["rlds"] <- NULL
 # Build data frame
-yymmdd <- format(as.Date(dates$start), format = "%Y-%m-%d %H:%M:%S")
-# hhmmss <- format(as.POSIXlt(dates$start), format = "%H:%M:%S") 
-df <- data.frame(c(list("date" = yymmdd)), data)
+yymmdd <- as.Date(dates$start)
+hhmmss <- format(as.POSIXlt(dates$start), format = "%H:%M:%S")
+datetime = paste(yymmdd, hhmmss)
+df <- data.frame(c(list("DateTime" = datetime)), data_sub)
+colnames(df) <- c("DateTime", cnams)
+df$ps_Pa <- df$ps_millibars*100
 
 
 ########### EXPORT DATA ACCORDING TO THE WATExR ARCHIVE DESIGN -----------------------------
@@ -313,3 +321,4 @@ endTime <- format(tail(as.POSIXlt(yymmdd), n = 1), format = "%Y%m%d")
 dirName <- paste0(dir.data, lake_id, "/CLIMATE/", lake_id, "_", institution, "_", ClimateModelName, "_", ExperimentName, "_", member, "_", freq, "_", startTime, "-", endTime, "/", sep = "", collapse = NULL)
 dir.create(dirName, showWarnings = TRUE, recursive = TRUE, mode = "0777")
 write.table(df, paste0(dirName,"meteo_file.dat", sep = "", collapse = NULL), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+write.table(df, 'mt_bold_ewembi.dat', row.names = F, quote = F, sep = '\t')
