@@ -22,6 +22,7 @@ lake <- list(x = lake_coords[1], y = lake_coords[2])
 period <- args[11]
 model <- args[12]
 season_name <- args[13]
+cdsDic <- 'SYSTEM5_ecmwf_Seasonal_25Members_SFC.dic'
 
 # Login
 loginUDG("WATExR", "1234567890")
@@ -30,6 +31,7 @@ loginUDG("WATExR", "1234567890")
 data.prelim <- lapply(1:length(variables), 
                       function(x) loadSeasonalForecast(url, 
                                                        variables[x], 
+                                                       dictionary = cdsDic,
                                                        members = members,
                                                        lonLim = lonLim, 
                                                        latLim = latLim, 
@@ -38,18 +40,10 @@ data.prelim <- lapply(1:length(variables),
                                                        leadMonth = lead.month, 
                                                        time = "DD", 
                                                        aggr.d = aggr.func[x], 
-                                                       aggr.m = "none"
                                                       )
                       )   
 
 names(data.prelim) <- variables
-
-# Convert units
-data.prelim$tas$Data <- data.prelim$tas$Data - 273.15 # K to deg C
-attr(data.prelim$tas$Variable, "units") <- "C"
-
-data.prelim$tp$Data <- data.prelim$tp$Data * 1000 # m to mm
-attr(data.prelim$tp$Variable, "units") <- "mm"
 
 # Bilinear interpolation of the S5 data to the location of the lake
 data <- lapply(data.prelim, 

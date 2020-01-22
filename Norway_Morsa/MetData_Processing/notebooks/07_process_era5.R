@@ -27,8 +27,17 @@ names(era5_daily) <- variables
 era5_daily$tas$Data <- era5_daily$tas$Data - 273.15 # K to deg C
 attr(era5_daily$tas$Variable, "units") <- "C"
 
+era5_daily$tdps$Data <- era5_daily$tdps$Data - 273.15 # K to deg C
+attr(era5_daily$tdps$Variable, "units") <- "C"
+
 era5_daily$tp$Data <- era5_daily$tp$Data * 1000 # m to mm
 attr(era5_daily$tp$Variable, "units") <- "mm"
+
+era5_daily$rsds$Data <- era5_daily$rsds$Data / 86400 # J.m-2.day-1 to W.m-2
+attr(era5_daily$rsds$Variable, "units") <- "W.m-2"
+
+era5_daily$rlds$Data <- era5_daily$rlds$Data / 86400 # J.m-2.day-1 to W.m-2
+attr(era5_daily$rlds$Variable, "units") <- "W.m-2"
 
 # Bilinear interpolation to the location of the lake
 era5_daily <- lapply(era5_daily, 
