@@ -34,7 +34,7 @@ Time series for Lake Morsa in CSV format can be found [here](https://github.com/
 
 Outputs in `.rda` format can be found [here](https://github.com/icra/WATExR/tree/master/Norway_Morsa/Data/Meteorological/RData). 
 
-The following abbreviations are used for varaible names in the output files:
+The following abbreviations are used for variable names in the output files:
 
     psl     Surface pressure (Pa)
     tcc     Total cloud cover (fraction between 0 and 1; dimensionless)
