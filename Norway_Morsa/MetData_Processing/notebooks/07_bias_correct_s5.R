@@ -60,16 +60,18 @@ if (sum(names(data)=="tp") > 0){
 # Check variable names are consistent
 if (!identical(names(obs.data), names(data))) stop("Variables in obs and mod do not match.")
 
-# Bias correction without cross-validation
+# Bias correction with LOO cross-validation
 data.bc <- lapply(1:length(data), function(v)  {
     pre <- FALSE
     if (names(data)[v] == "tp") pre <- TRUE
     biasCorrection(y = obs.data[[v]], 
                    x = data[[v]], 
                    method = "eqm",
+                   cross.val = "loo",
                    precipitation = pre,
                    wet.threshold = 1,
-                   join.members = TRUE
+                   join.members = TRUE,
+                   parallel = TRUE
                   )
 }) 
 
