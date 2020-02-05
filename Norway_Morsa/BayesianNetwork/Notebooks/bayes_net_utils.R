@@ -1,14 +1,17 @@
-bayes_net_predict <- function(year, chla_prevSummer, colour_prevSummer, TP_prevSummer, wind_speed, rain) {
+bayes_net_predict <- function(rfile_fpath, sd_fpath,
+                              year, chla_prevSummer, colour_prevSummer, TP_prevSummer, wind_speed, rain) {
     #' Make predictions given the evidence provided based on the pre-fitted Bayesian network (saved as 
     #' 'Vansjo_fitted_seasonal_GaussianBN_1981-2018.rds'). 
     #' 
     #' Args:
+    #'     rfile_fpath:       Str. Filepath to fitted BNLearn network object (.rds file)
+    #'     sd_fpath:          Str. Filepath to csv containing standard deviation info from fitted BN
     #'     year:              Int. Year for prediction
-    #'     chla_prevSummer:   Float. Chl-a measured from the previous summer 
-    #'     colour_prevSummer: Float. Colour measured from the previous summer
-    #'     TP_prevSummer:     Float. Total P measured from the previous summer
-    #'     wind_speed:        Float. Predicted wind speed for season of interest
-    #'     rain:              Float. Predicted precipitation for season of interest
+    #'     chla_prevSummer:   Float. Chl-a measured from the previous summer (mg/l)
+    #'     colour_prevSummer: Float. Colour measured from the previous summer (mg Pt/l)
+    #'     TP_prevSummer:     Float. Total P measured from the previous summer (mg/l)
+    #'     wind_speed:        Float. Predicted wind speed for season of interest (m/s)
+    #'     rain:              Float. Predicted precipitation for season of interest (mm)
     #' 
     #' Returns:
     #'     R dataframe
@@ -30,9 +33,7 @@ bayes_net_predict <- function(year, chla_prevSummer, colour_prevSummer, TP_prevS
     # Convert any integer cols to numeric    
     driving_data[1:ncol(driving_data)] = lapply(driving_data[1:ncol(driving_data)], as.numeric) 
       
-    # Load fitted Bayesian network and pre-calculated std. devs. 
-    rfile_fpath <- "/home/jovyan/projects/WATExR/Norway_Morsa/BayesianNetwork/Data/RData/Vansjo_fitted_seasonal_GaussianBN_1981-2018.rds"  
-    sd_fpath <- "/home/jovyan/projects/WATExR/Norway_Morsa/BayesianNetwork/Data/FittedNetworkDiagnostics/GBN_1981-2018_stdevs.csv"    
+    # Load fitted Bayesian network and pre-calculated std. devs.    
     fitted_BN = readRDS(rfile_fpath)
     sds = read.csv(file=sd_fpath, header=TRUE, sep=",")  
              
@@ -42,7 +43,7 @@ bayes_net_predict <- function(year, chla_prevSummer, colour_prevSummer, TP_prevS
         
     set.seed(1)
     
-    # Loop over nodes
+    # Loop over nodes and derive expected values
     expectedValue_li = vector(mode = "list", length = 0)
     
     for (node in nodes_to_predict){
@@ -66,7 +67,9 @@ bayes_net_predict <- function(year, chla_prevSummer, colour_prevSummer, TP_prevS
     # Just select values associated with nodes for prediction, and sort alphabetically
     sd_predictedNodes = filter(sds, node %in% nodes_to_predict)
     sd_predictedNodes = sd_predictedNodes[order(sd_predictedNodes$node),]
-        
+    
+    # Thresholds to use in classification. N.B. this is also defined in bayes_net_utils.py in bayes_net_predict function, so any changes here
+    # must be carried through to there
     boundaries_list = list('TP' = 29.5,     # Middle of 'Moderate' class
                            'chla' = 20.0,   # M-P boundary. WFD boundaries: [10.5, 20.0]. Only 6 observed points under 10.5 so merge G & M
                            'colour' = 48.0, # 66th percentile (i.e. upper tercile). No management implications
@@ -82,11 +85,11 @@ bayes_net_predict <- function(year, chla_prevSummer, colour_prevSummer, TP_prevS
     # Empty list to be populated with probability of being below boundary
     prob_li = vector(mode = "list", length = 0)
       
-    # Loop over nodes
+    # Loop over nodes and predict probabilities of being within various classes
     for (node in nodes_to_predict){
         boundary = unlist(boundaries_list[node], use.names=FALSE)
     
-        # If cyanomax, apply boxcox transformation with lambda=0.1
+        # If cyanomax, apply boxcox transformation with lambda=0.1 to boundary first
         if (node=='cyano'){
             boundary = (boundary^0.1 - 1)/0.1
         }
