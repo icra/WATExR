@@ -68,8 +68,7 @@ bayes_net_predict <- function(rfile_fpath, sd_fpath,
     sd_predictedNodes = filter(sds, node %in% nodes_to_predict)
     sd_predictedNodes = sd_predictedNodes[order(sd_predictedNodes$node),]
     
-    # Thresholds to use in classification. N.B. this is also defined in bayes_net_utils.py in bayes_net_predict function, so any changes here
-    # must be carried through to there
+    # Thresholds to use in classification
     boundaries_list = list('TP' = 29.5,     # Middle of 'Moderate' class
                            'chla' = 20.0,   # M-P boundary. WFD boundaries: [10.5, 20.0]. Only 6 observed points under 10.5 so merge G & M
                            'colour' = 48.0, # 66th percentile (i.e. upper tercile). No management implications
