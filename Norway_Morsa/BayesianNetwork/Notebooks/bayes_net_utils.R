@@ -123,3 +123,60 @@ bayes_net_predict <- function(rfile_fpath, sd_fpath,
   
     return(prob_df)
 }
+
+tercile_plot_from_dataframes <- function(obs_df, s5_df, var_name, pdf_path) {
+    #' Hacky function for reformatting R dataframes produced by the Bayesian network for use  
+    #' with VisualizeR's 'tercilePlot' function. This is achieved by munging/overwriting data 
+    #' & attributes in two pre-existing Climate4R objects. It's not pretty, but easier than 
+    #' creating the objects from scratch.'
+    #' 
+    #' Each dataframe MUST contain data for only a single node/variable.
+    #' 
+    #' Args:
+    #'     obs_df:   Dataframe. Must have columns named 'year', 'node' and 'value'
+    #'     s5_df:    Dataframe. Must have columns named 'year', 'node' and 'sim_s5_01' to 
+    #'               'sim_s5_25' 
+    #'     var_name: Str. Name of variable for use in plot title
+    #'     pdf_path: Str. File path for PDF to be created
+    #' 
+    #' Returns:
+    #'     None. The tercile plot is saved as a PDF to 'pdf_path'.
+    suppressMessages(library(loadeR))
+    suppressMessages(library(visualizeR))  
+    suppressMessages(library(Cairo)) 
+  
+    # Read previously downloaded ERA5 and S5 datasets with the correct Climate4R format.
+    # These are used as "templates" to be overwritten with new data, as this is easier 
+    # manually constructing appropriate Climate4R objects
+    ers5_path <- '../../Data/Meteorological/RData/era5_morsa_1980-2019_daily.rda'
+    load(file=ers5_path)
+    e5 <- era5_daily[[1]]
+
+    s5_path <- '../../Data/Meteorological/RData/s5_morsa_bayes_net_hindcast_summer.rda'
+    load(file=s5_path)
+    s5 <- data[[1]]
+    
+    # Update relevant parts of "observed" dataset
+    e5$Dates$start <- as.Date(ISOdate(obs_df$year, 1, 1))
+    e5$Dates$end <- as.Date(ISOdate(obs_df$year, 1, 2))
+    e5$Data <- obs_df$value
+    
+    attr(e5$Data, 'dimensions') = 'time'
+    attr(e5$Data, 'dim') = length(obs_df$value)
+
+    # Update relevant parts of S5 dataset
+    s5$Dates$start <- as.Date(ISOdate(s5_df$year, 1, 1))
+    s5$Dates$end <- as.Date(ISOdate(s5_df$year, 1, 2))
+    
+    drops <- c("X", "year", "node")
+    s5_df_vals <- s5_df[ , !(names(s5_df) %in% drops)]
+    s5$Data <- t(as.matrix(s5_df_vals))
+    
+    attr(s5$Data, 'dimensions') = c('member', 'time')  
+    attr(s5$Variable, 'longname') <- var_name
+
+    # Save
+    CairoPDF(file = pdf_path, width = 10)
+    tercilePlot(obs = redim(e5), hindcast = redim(s5))
+    dev.off()        
+}
