@@ -157,16 +157,16 @@ tercile_plot_from_dataframes <- function(obs_df, s5_df, var_name, pdf_path) {
     s5 <- data[[1]]
     
     # Update relevant parts of "observed" dataset
-    e5$Dates$start <- as.Date(ISOdate(obs_df$year, 1, 1))
-    e5$Dates$end <- as.Date(ISOdate(obs_df$year, 1, 2))
+    e5$Dates$start <- as.Date(ISOdate(obs_df$year, 5, 1))
+    e5$Dates$end <- as.Date(ISOdate(obs_df$year, 10, 31))
     e5$Data <- obs_df$value
     
     attr(e5$Data, 'dimensions') = 'time'
     attr(e5$Data, 'dim') = length(obs_df$value)
 
     # Update relevant parts of S5 dataset
-    s5$Dates$start <- as.Date(ISOdate(s5_df$year, 1, 1))
-    s5$Dates$end <- as.Date(ISOdate(s5_df$year, 1, 2))
+    s5$Dates$start <- as.Date(ISOdate(s5_df$year, 5, 1))
+    s5$Dates$end <- as.Date(ISOdate(s5_df$year, 10, 31))
     
     drops <- c("X", "year", "node")
     s5_df_vals <- s5_df[ , !(names(s5_df) %in% drops)]
