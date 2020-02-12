@@ -46,60 +46,6 @@ def bayes_net_predict(rfile_fpath, sd_fpath, year, chla_prev_summer, colour_prev
 
     return df
 
-def tercile_plot_from_dataframes(obs_df, s5_df, var_name, pdf_path):
-    """ Creates a tercile plot for visualisation of forecast skill of seasonal climate 
-        predictions. This function is just a thin "wrapper" around the R function named 
-        'tercile_plot_from_dataframes' in 'bayes_net_utils.R'.
-        
-        NOTE: 'bayes_net_utils.R' must be in the same folder as this file.
-        
-        Each dataframe MUST contain data for only a single node/variable.
-    
-    Args:
-        obs_df:   Dataframe. Must have columns named 'year', 'node' and 'value'
-        s5_df:    Dataframe. Must have columns named 'year', 'node' and 'sim_s5_01' to 
-                  'sim_s5_25' 
-        var_name: Str. Name of variable for use in plot title
-        pdf_path: Str. File path for PDF to be created
-    
-    Returns:
-        None. The tercile plot is saved as a PDF to 'pdf_path'.
-    """
-    import pandas as pd
-    import rpy2.robjects as ro
-    from rpy2.robjects.packages import importr
-    from rpy2.robjects import pandas2ri
-    from rpy2.robjects.conversion import localconverter
- 
-    # Check input data
-    assert len(obs_df['node'].unique()) == 1, "'obs_df' must contain data for only a single node/variable."
-    assert len(s5_df['node'].unique()) == 1, "'s5_df' must contain data for only a single node/variable."
-    assert obs_df['year'].duplicated().all() == False, "'obs_df' has duplicated years."
-    assert s5_df['year'].duplicated().all() == False, "'s5_df' has duplicated years."
-    
-    # Sort by year
-    obs_df = obs_df.sort_values(by='year').reset_index(drop=True)
-    s5_df = s5_df.sort_values(by='year').reset_index(drop=True)
-    
-    # Intersect years
-    df = pd.merge(obs_df, s5_df, how='inner', on=['year', 'node'])
-    if (len(df) != len(obs_df)) or (len(df) != len(s5_df)):
-        print("WARNING: Years in 'obs_df' and 's5_df' are not the same. Terciles will be computed based on the intersection of years.")
-    obs_df = df[obs_df.columns]
-    s5_df = df[s5_df.columns]
-        
-    # Load R script
-    ro.r.source('bayes_net_utils.R')
-    
-    # Convert to R df
-    with localconverter(ro.default_converter + pandas2ri.converter):
-        obs_df_r = ro.conversion.py2rpy(obs_df)
-        s5_df_r = ro.conversion.py2rpy(s5_df)
-
-    # Call R function with user-specified evidence
-    res = ro.r['tercile_plot_from_dataframes'](obs_df_r, s5_df_r, var_name, pdf_path)
-    
-    return None
     
 def classification_error(obs, pred):
     """
@@ -181,17 +127,20 @@ def discretize(thresholds, value):
     (max 2 class boundaries (thresholds) supported at present)
     
     e.g. of usage:
+    # E.g. 1:
     bound_dict = {'TP':[29.5]}
     for col in continuous_df.columns:
         disc_df[col] = continuous_df[col].apply(lambda x: discretize(bound_dict['TP'], x))
+    # E.g. 2:
+    df['WFD_class'] = df[['threshold','expected_value']].apply(lambda x: discretize([x.threshold], x.expected_value), axis=1)
     """
     import numpy as np
     
     if np.isnan(value):
         return np.NaN
     
-    factor_li_dict = {2: ['0','1'],
-                     3: ['0','1','2'],}
+    factor_li_dict = {2: [0, 1],
+                     3: [0, 1, 2],} # Originally returned class as a string, don't know why. Have changed to integer, may break something...
     
     n_classes = len(thresholds)+1
     
@@ -261,3 +210,59 @@ def read_s5_csv(s5_met_folder, season, member):
     met_df.index.name = 'Date'
         
     return met_df
+
+
+def tercile_plot_from_dataframes(obs_df, s5_df, var_name, pdf_path):
+    """ Creates a tercile plot for visualisation of forecast skill of seasonal climate 
+        predictions. This function is just a thin "wrapper" around the R function named 
+        'tercile_plot_from_dataframes' in 'bayes_net_utils.R'.
+        
+        NOTE: 'bayes_net_utils.R' must be in the same folder as this file.
+        
+        Each dataframe MUST contain data for only a single node/variable.
+    
+    Args:
+        obs_df:   Dataframe. Must have columns named 'year', 'node' and 'value'
+        s5_df:    Dataframe. Must have columns named 'year', 'node' and 'sim_s5_01' to 
+                  'sim_s5_25' 
+        var_name: Str. Name of variable for use in plot title
+        pdf_path: Str. File path for PDF to be created
+    
+    Returns:
+        None. The tercile plot is saved as a PDF to 'pdf_path'.
+    """
+    import pandas as pd
+    import rpy2.robjects as ro
+    from rpy2.robjects.packages import importr
+    from rpy2.robjects import pandas2ri
+    from rpy2.robjects.conversion import localconverter
+ 
+    # Check input data
+    assert len(obs_df['node'].unique()) == 1, "'obs_df' must contain data for only a single node/variable."
+    assert len(s5_df['node'].unique()) == 1, "'s5_df' must contain data for only a single node/variable."
+    assert obs_df['year'].duplicated().all() == False, "'obs_df' has duplicated years."
+    assert s5_df['year'].duplicated().all() == False, "'s5_df' has duplicated years."
+    
+    # Sort by year
+    obs_df = obs_df.sort_values(by='year').reset_index(drop=True)
+    s5_df = s5_df.sort_values(by='year').reset_index(drop=True)
+    
+    # Intersect years
+    df = pd.merge(obs_df, s5_df, how='inner', on=['year', 'node'])
+    if (len(df) != len(obs_df)) or (len(df) != len(s5_df)):
+        print("WARNING: Years in 'obs_df' and 's5_df' are not the same. Terciles will be computed based on the intersection of years.")
+    obs_df = df[obs_df.columns]
+    s5_df = df[s5_df.columns]
+        
+    # Load R script
+    ro.r.source('bayes_net_utils.R')
+    
+    # Convert to R df
+    with localconverter(ro.default_converter + pandas2ri.converter):
+        obs_df_r = ro.conversion.py2rpy(obs_df)
+        s5_df_r = ro.conversion.py2rpy(s5_df)
+
+    # Call R function with user-specified evidence
+    res = ro.r['tercile_plot_from_dataframes'](obs_df_r, s5_df_r, var_name, pdf_path)
+    
+    return None

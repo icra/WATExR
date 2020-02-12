@@ -146,7 +146,7 @@ tercile_plot_from_dataframes <- function(obs_df, s5_df, var_name, pdf_path) {
     suppressMessages(library(Cairo)) 
   
     # Read previously downloaded ERA5 and S5 datasets with the correct Climate4R format.
-    # These are used as "templates" to be overwritten with new data, as this is easier 
+    # These are used as "templates" to be overwritten with new data, as this is easier than
     # manually constructing appropriate Climate4R objects
     ers5_path <- '../../Data/Meteorological/RData/era5_morsa_1980-2019_daily.rda'
     load(file=ers5_path)
