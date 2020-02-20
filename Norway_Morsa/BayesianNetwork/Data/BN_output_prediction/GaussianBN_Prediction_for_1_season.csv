@@ -1,5 +1,0 @@
-"node","threshold","prob_below_threshold","prob_above_threshold","expected_value","sd"
-"chla",20,0.99,0.01,9.75,3.68
-"colour",48,0.94,0.0600000000000001,34.2,8.72
-"cyano",1,0.83,0.17,0.342,0.756
-"TP",29.5,0.97,0.03,22.8,3.72
