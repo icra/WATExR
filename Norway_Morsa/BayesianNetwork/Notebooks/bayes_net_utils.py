@@ -1,8 +1,7 @@
 def bayes_net_predict(rfile_fpath, sd_fpath, year, chla_prev_summer, colour_prev_summer,
                       tp_prev_summer, wind_speed, rain):
-    """ Make predictions given the evidence provided based on the pre-fitted Bayesian network (saved as 
-        'Vansjo_fitted_seasonal_GaussianBN_1981-2018.rds'). This function is just a thin "wrapper" 
-        around the R function named 'bayes_net_predict' in 'bayes_net_utils.R'.
+    """ Make predictions given the evidence provided based on a pre-fitted Bayesian network.
+        This function is just a thin "wrapper" around the R function named 'bayes_net_predict' in 'bayes_net_utils.R'. See also bayes_net_predict_operational.
         
         NOTE: 'bayes_net_utils.R' must be in the same folder as this file.
         
@@ -18,7 +17,7 @@ def bayes_net_predict(rfile_fpath, sd_fpath, year, chla_prev_summer, colour_prev
     
     Returns:
         Dataframe with columns 'year', 'node', 'threshold', 'prob_below_threshold',
-       'prob_above_threshold', 'expected_value', 'sd'
+       'prob_above_threshold', 'expected_value', 'sd' (standard deviation)
     """
     import pandas as pd
     import rpy2.robjects as ro
@@ -48,11 +47,13 @@ def bayes_net_predict(rfile_fpath, sd_fpath, year, chla_prev_summer, colour_prev
 
 def bayes_net_predict_operational(rfile_fpath, year, chla_prev_summer, colour_prev_summer,
                                   tp_prev_summer):
-    """ Make predictions given the evidence provided based on the pre-fitted Bayesian network (saved as 
-        'Vansjo_fitted_seasonal_GaussianBN_1981-2018.rds'). This function is just a thin "wrapper" 
-        around the R function named 'bayes_net_predict' in 'bayes_net_utils.R'.  Drop met nodes for operational forecast,
-        and only forecast for TP, colour and cyano (not chla)).
-        Also remove standard deviations which were in bayes_net_predict function, as these have changed
+    """ Make predictions given the evidence provided based on the pre-fitted Bayesian network.
+        This function is just a thin "wrapper" around the R function named 'bayes_net_predict_operational' in 'bayes_net_utils.R'.
+        
+        Very similar to bayes_net_predict, but:
+        - Drop met nodes for operational forecast
+        - Only forecast for TP, colour and cyano (not chla)).
+        - Remove standard deviations which were in bayes_net_predict function, as these have changed and aren't used now anyway
         
         NOTE: 'bayes_net_utils.R' must be in the same folder as this file.
         
@@ -118,9 +119,9 @@ def classification_error(obs, pred):
 
 def daily_to_summer_season(daily_df):
     """
-    Take a dataframe with daily data, and aggregate it to seasonal (6 monthly), and just picking results for the summer (May-Oct) season.
+    Take a dataframe with daily frequency data, and aggregate it to seasonal (6 monthly), just picking results for the summer (May-Oct) season.
     Input: dataframe of daily data. Column names should match those defined in agg_method_dict.keys() (rain, colour, TP, chla, wind_speed, cyano). Any extras need adding to the dictionary.
-    Returns: dataframe of seasonally-aggregated data with columns 'rain' (sum of total rain in the period),'wind_speed' (mean)
+    Returns: dataframe of seasonally-aggregated data
     """
     import numpy as np, pandas as pd
     # Turn off "Setting with copy" warning, which is returning a false positive
@@ -130,6 +131,7 @@ def daily_to_summer_season(daily_df):
                        'colour': np.nanmean,
                        'TP': np.nanmean,
                        'chla': np.nanmean,
+                       'chl-a': np.nanmean,
                        'wind_speed': np.nanmean,
                        'cyano': np.nanmax
                       }
@@ -144,7 +146,7 @@ def daily_to_summer_season(daily_df):
     # The shift is needed because otherwise the last day of the period (corresponding to the label) is omitted. Checked manually and right.
     season_df = daily_df.shift(periods=-1).resample('2Q-Apr', closed='left').agg(agg_method_dict)
 
-    # Remove frequncy info from index so all plotting works right
+    # Remove frequncy info from index so plotting works right
     season_df.index.freq=None
 
     # Remove winter rows (a bit long-winded, but works)
