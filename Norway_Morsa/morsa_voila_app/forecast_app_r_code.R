@@ -15,7 +15,7 @@ years <- year:year
 season <- c(vargs[[2]])
 season <- as.integer(season)
 
-# Output path where the data will be saved (change to your local path).
+# Output path where the data will be saved
 dir.data <- './data_cache/s4_seasonal/' 
   
 # Define the geographical domain for the Morsa catchment

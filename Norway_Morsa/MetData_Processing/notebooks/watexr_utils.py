@@ -30,50 +30,50 @@ def target_plot(mod, obs, ax=None, title=None):
     import scipy.stats as st
     import pandas as pd
     import matplotlib.pyplot as plt
-    
+
     assert len(mod) == len(obs), "'mod' and 'obs' must be the same length."
 
     # Convert to dataframe
-    df = pd.DataFrame({'mod':np.array(mod),
-                       'obs':np.array(obs),
-                      })
-    
+    df = pd.DataFrame({"mod": np.array(mod), "obs": np.array(obs),})
+
     # Drop null
     if df.isna().sum().sum() > 0:
-        print('Dataset contains some NaN values. These will be ignored.')
-        df.dropna(how='any', inplace=True)
-    
-    mod = df['mod'].values
-    obs = df['obs'].values
-    
+        print("Dataset contains some NaN values. These will be ignored.")
+        df.dropna(how="any", inplace=True)
+
+    mod = df["mod"].values
+    obs = df["obs"].values
+
     # Calculate stats.
-    normed_bias = (mod.mean() - obs.mean()) / obs.std()       
+    normed_bias = (mod.mean() - obs.mean()) / obs.std()
     pearson_cc, pearson_p = st.pearsonr(mod, obs)
     normed_std_dev = mod.std() / obs.std()
-    normed_unbiased_rmsd = (1.0 + normed_std_dev**2 - (2*normed_std_dev*pearson_cc))**0.5
+    normed_unbiased_rmsd = (
+        1.0 + normed_std_dev ** 2 - (2 * normed_std_dev * pearson_cc)
+    ) ** 0.5
     normed_unbiased_rmsd = np.copysign(normed_unbiased_rmsd, mod.std() - obs.std())
 
     # Setup plot
     if ax is None:
         fig = plt.figure(figsize=(5, 5))
-        ax = fig.add_subplot(111, aspect='equal')
+        ax = fig.add_subplot(111, aspect="equal")
 
-    inner_circle = plt.Circle((0, 0), 0.7, edgecolor='k', ls='--', lw=1, fill=False)
+    inner_circle = plt.Circle((0, 0), 0.7, edgecolor="k", ls="--", lw=1, fill=False)
     ax.add_artist(inner_circle)
 
-    outer_circle = plt.Circle((0, 0), 1, edgecolor='k', ls='-', lw=1, fill=False)
+    outer_circle = plt.Circle((0, 0), 1, edgecolor="k", ls="-", lw=1, fill=False)
     ax.add_artist(outer_circle)
-    
+
     vline = ax.vlines(0, -2, 2)
     hline = ax.hlines(0, -2, 2)
 
     # Add labels and titles
-    ax.set_xlabel('Normalised, unbiased RMSD')
-    ax.set_ylabel('Normalised bias')
+    ax.set_xlabel("Normalised, unbiased RMSD")
+    ax.set_ylabel("Normalised bias")
     if title:
-        ax.set_title(title)        
+        ax.set_title(title)
 
     # Plot data
-    ax.plot(normed_unbiased_rmsd, normed_bias, 'ro', markersize=10, markeredgecolor='k')
-    
+    ax.plot(normed_unbiased_rmsd, normed_bias, "ro", markersize=10, markeredgecolor="k")
+
     return (normed_bias, normed_unbiased_rmsd)
