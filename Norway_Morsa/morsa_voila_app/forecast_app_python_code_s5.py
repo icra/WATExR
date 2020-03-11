@@ -136,7 +136,14 @@ def calculate_s5_quantiles(
         df = df.query("year != 1992")  # 1992 not valid (as only have Jan from 1993)
 
         # Groupby year
-        df = df.groupby(["member", "year"]).mean()
+        agg_dict = {}
+        for par in par_list:
+            if par == "tp":
+                agg_dict[par] = "sum"
+            else:
+                agg_dict[par] = "mean"
+
+        df = df.groupby(["member", "year"]).agg(agg_dict)
 
         # Calculate quantiles
         quant_df = df.quantile(quants)
@@ -182,7 +189,13 @@ def aggregate_s5_forecast(
 
         # Date range in CSV should already be correct based on filename
         # so can average directly
-        df = df.mean()[par_list].to_frame().T
+        agg_dict = {}
+        for par in par_list:
+            if par == "tp":
+                agg_dict[par] = "sum"
+            else:
+                agg_dict[par] = "mean"
+        df = df.agg(agg_dict)[par_list].to_frame().T
 
         assert len(df) == 1
 
@@ -268,7 +281,7 @@ def assign_quantiles(
         # Get terciles
         terc_df = pd.cut(mod_df[par], bins=terc_bins, labels=terc_labels)
         print(par)
-        print(100*terc_df.value_counts()/25)
+        print(100 * terc_df.value_counts() / 25)
         terc = terc_df.value_counts().idxmax()
         terc_prob = 100 * terc_df.value_counts().max() / 25
 
