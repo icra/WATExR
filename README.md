@@ -1,4 +1,4 @@
-# WATExR
+# WATExR (watexr.eu)
 
 The WATExR project aims to deliver a series of environmental and ecological seasonal forecasting tools to 
 the water sector within a user-friendly software environment (e.g., QGIS). The tools will employ a variety
