@@ -1,1 +1,1 @@
-This is the folder containing the cupporting information for the paper Seasonl Forecasting to watershed-lake syste.
+This is the folder containing the supporting information for the paper Seasonal Forecasting to Watershed-Lake System.
