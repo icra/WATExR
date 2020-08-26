@@ -1,1 +1,1 @@
-Location of codes, inputs, calibration-validation, results, plots and models related to the lake.
+Location of codes, inputs, calibration-validation and tercile plots related to the lake.
