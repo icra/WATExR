@@ -1,1 +1,1 @@
-Inputs: reanalisis and seasonal forecasting data used
+inputs and outputs used in the codes section
