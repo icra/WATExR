@@ -1,1 +1,1 @@
-Plots for the atmospheric variables
+tercile plots for the atmospheric variables
