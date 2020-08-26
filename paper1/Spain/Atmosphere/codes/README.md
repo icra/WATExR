@@ -1,1 +1,1 @@
-Codes used to download, bias correction and interpolation of atmospheric data
+Codes used to download, bias-correct and interpolate the atmospheric data
