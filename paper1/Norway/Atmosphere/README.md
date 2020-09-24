@@ -4,8 +4,6 @@
 
 ### Code
 
-These notebooks implement steps in the "common paper" protocol described [here](https://docs.google.com/document/d/17vP2NkuBOcP4I4mCHZvce92IkDJdszJDfLtEN-g9MaE/edit#) (only accessible to project members).
-
  * **[Notebook 05](https://nbviewer.jupyter.org/github/icra/WATExR/blob/master/Norway_Morsa/MetData_Processing/notebooks/05_download_era5.ipynb)** downloads and restructures ERA5 data from the [Climate Data Service](https://cds.climate.copernicus.eu/cdsapp#!/search?type=dataset) (protocol step 1)
  
  * **[Notebook 06](https://nbviewer.jupyter.org/github/icra/WATExR/blob/master/Norway_Morsa/MetData_Processing/notebooks/06_explore_era5.ipynb)** compares the ERA5 temperature and precipitation records to more detailed observational data provided by [met.no](https://www.met.no/) (protocol step 2)
@@ -24,7 +22,7 @@ These notebooks implement steps in the "common paper" protocol described [here](
  
 ### Outputs
 
-Time series for Lake Morsa in CSV format can be found [here](https://github.com/icra/WATExR/tree/master/Norway_Morsa/Data/Meteorological/06_era5) for ERA5 and [here](https://github.com/icra/WATExR/tree/master/Norway_Morsa/Data/Meteorological/07_s5_seasonal) for System 5.
+Time series for Lake Vansjø in CSV format can be found [here](https://github.com/icra/WATExR/tree/master/Norway_Morsa/Data/Meteorological/06_era5) for ERA5 and [here](https://github.com/icra/WATExR/tree/master/Norway_Morsa/Data/Meteorological/07_s5_seasonal) for System 5.
 
 Outputs in `.rda` format can be found [here](https://github.com/icra/WATExR/tree/master/Norway_Morsa/Data/Meteorological/RData). 
 
