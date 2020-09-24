@@ -1,11 +1,5 @@
 # Processing meteorological data for the Morsa catchment case study (Norway)
 
-## Original workflow (deprecated)
-
- * **Notebooks 01 to 03** process old datasets (EWEMBI, ERA-Interim and System 4), which are no longer used
- 
- * **[Notebook 04](https://nbviewer.jupyter.org/github/icra/WATExR/blob/master/Norway_Morsa/MetData_Processing/notebooks/04_make_climate_forecast.ipynb)** is a prototype for the Morsa forecast app, which is now implemented [here](https://github.com/icra/WATExR/tree/master/Norway_Morsa/morsa_voila_app)
- 
 ## Current workflow
 
 ### Code
