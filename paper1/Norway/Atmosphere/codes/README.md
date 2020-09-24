@@ -22,9 +22,9 @@
  
 ### Outputs
 
-Time series for Lake Vansjø in CSV format can be found [here](https://github.com/icra/WATExR/tree/master/Norway_Morsa/Data/Meteorological/06_era5) for ERA5 and [here](https://github.com/icra/WATExR/tree/master/Norway_Morsa/Data/Meteorological/07_s5_seasonal) for System 5.
+Time series for Lake Vansjø in CSV format can be found [here](https://github.com/icra/WATExR/edit/master/paper1/Norway/Atmosphere/inputs).
 
-Outputs in `.rda` format can be found [here](https://github.com/icra/WATExR/tree/master/Norway_Morsa/Data/Meteorological/RData). 
+Outputs in `.rda` format can be found [here](https://github.com/icra/WATExR/edit/master/paper1/Norway/Atmosphere/inputs/RData). 
 
 The following abbreviations are used for variable names in the output files:
 
