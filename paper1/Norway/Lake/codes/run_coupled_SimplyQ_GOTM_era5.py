@@ -44,7 +44,7 @@ def run_single_coupled_model(dataset, store_folder, vanem_folder, store_result_n
 	inflow_temperature = dataset.get_result_series('Water temperature', ['Vaaler']) #It will be the same for all reaches unless somebody decide to recalibrate that
 
 
-	inflow_storefjord = flow_vaaler + flow_store
+	#inflow_storefjord = flow_vaaler + flow_store
 
 
 	# Create input file for gotm at Storefjord
@@ -57,7 +57,8 @@ def run_single_coupled_model(dataset, store_folder, vanem_folder, store_result_n
 
 	os.chdir(store_folder)
 
-	save_gotm_input_file('store_inflow.dat', dates, inflow_storefjord, inflow_temperature)
+	save_gotm_input_file('Store_inflow_era5.dat', dates, flow_store, inflow_temperature)
+	save_gotm_input_file('Vaaler_inflow_era5.dat', dates, flow_vaaler, inflow_temperature)
 
 	proc = Popen(['./gotm'], stdout=PIPE)
 	print(proc.communicate())
@@ -79,8 +80,8 @@ def run_single_coupled_model(dataset, store_folder, vanem_folder, store_result_n
 
 	os.chdir('../%s' % vanem_folder)
 
-	save_gotm_input_file('store_outflow.dat', dates, store_outflow, store_outflow_temp)
-	save_gotm_input_file('vanem_subcatchment_outflow.dat', dates, flow_vanem, inflow_temperature)
+	save_gotm_input_file('Store_outflow_27_03.dat', dates, store_outflow, store_outflow_temp)
+	save_gotm_input_file('Vanem_inflow_era5.dat', dates, flow_vanem, inflow_temperature)
 
 	proc = Popen(['./gotm'], stdout=PIPE)
 	print(proc.communicate())
@@ -98,44 +99,46 @@ def run_single_coupled_model_with_input(dataset, store_result_name, vanem_result
 
 	timesteps = len(df.index)
 
-	start_date = pd.to_datetime(str(df['Date'].values[0])).strftime('%Y-%m-%d')
-	end_date   = pd.to_datetime(str(df['Date'].values[-1])).strftime('%Y-%m-%d')
+	start_date = pd.to_datetime(str(df['dates'].values[0])).strftime('%Y-%m-%d')
+	end_date   = pd.to_datetime(str(df['dates'].values[-1])).strftime('%Y-%m-%d')
 
 	dataset.set_parameter_time('Start date', [], start_date)
 	dataset.set_parameter_uint('Timesteps', [], timesteps)
 
-	dataset.set_input_series('Precipitation', [], df['pr'].values, alignwithresults=True)
+	dataset.set_input_series('Precipitation', [], df['tp'].values, alignwithresults=True)
 	dataset.set_input_series('Air temperature', [], df['tas'].values, alignwithresults=True)	
 
 	# make temp copy of store and vanem to store_temp, vanem_temp
 
-	os.system('cp -r store store_temp')
-	os.system('cp -r vanem vanem_temp')
+	os.system('cp -r store_era5 store_temp')
+	os.system('cp -r vanem_era5 vanem_temp')
 
 	# modify the met input files in those folders with the data from df
 
-	precip_df = df[['Date', 'pr']]
+	precip_df = df[['dates', 'tp']]
 
-	precip_df.to_csv('store_temp/precip_van.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
-	precip_df.to_csv('vanem_temp/precip_van.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
+	precip_df.to_csv('store_temp/precip_van_era5.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
+	precip_df.to_csv('vanem_temp/precip_van_era5.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
 
 
-	rad_df = df[['Date', 'rsds']]
+	rad_df = df[['dates', 'rsds']]
 	
-	rad_df.to_csv('store_temp/radiation_van.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
-	rad_df.to_csv('vanem_temp/radiation_van.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
+	rad_df.to_csv('store_temp/rad_van_era5.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
+	rad_df.to_csv('vanem_temp/rad_van_era5.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
 
-	weather_df = df[['Date', 'uas', 'vas', 'ps', 'tas', 'hurs', 'cc']]
-	weather_df['cc'] = 0
+#	weather_df = df[['Date', 'uas', 'vas', 'ps', 'tas', 'hurs', 'cc']]
+	weather_df = df[['dates', 'uas', 'vas', 'psl', 'tas', 'tdps', 'tcc']]
+	weather_df['psl'] /= 100.0
+#	weather_df['tcc'] = 0
 
-	weather_df.to_csv('store_temp/weather_van_cc.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
-	weather_df.to_csv('vanem_temp/weather_van_cc.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
+	weather_df.to_csv('store_temp/weather_van_era5.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
+	weather_df.to_csv('vanem_temp/weather_van_era5.dat', index=False, sep='\t', header=False, date_format='%Y-%m-%d %H:%M:%S', quoting=csv.QUOTE_NONE, float_format='%.6f')
 
 	# NOTE: Update gotmrun.nml to have correct start_date and end_date
 	for filename in ['store_temp/gotmrun.nml', 'vanem_temp/gotmrun.nml']:
 		with open(filename, 'r') as myfile:
 	  		data = myfile.read()
-			data = data.replace('1979-01-01', start_date)   #WARNING: This is kind of volatile if we change start date in the default gotmrun.nml
+			data = data.replace('1994-01-01', start_date)   #WARNING: This is kind of volatile if we change start date in the default gotmrun.nml
 			data = data.replace('2015-12-31', end_date)
 			myfile.close()
 			with open(filename, 'w') as myfile :
@@ -155,9 +158,9 @@ def renormalize(year, month) :
 		return year, month
 
 def full_scenario_run(dataset) :
-	for year in range(1981, 2011) :   #range is noninclusive in the second argument, so final year is 2010
+	for year in range(1993, 2018) :   #range is noninclusive in the second argument, so final year is 2010
 	#for year in range(1981, 1982) :
-		for season_idx, season in enumerate(['spring', 'summer', 'fall', 'winter']):
+		for season_idx, season in enumerate(['spring', 'summer', 'autumn', 'winter']):
 		#for season_idx, season in enumerate(['spring']):
 			
 			#start the run 1 year and 1 month before the target season
@@ -178,34 +181,22 @@ def full_scenario_run(dataset) :
 				% (year, season, warmup_start_year, warmup_start_month, 1, warmup_end_year, warmup_end_month, monthlen(warmup_end_year, warmup_end_month), run_start_year, run_start_month, 1, run_end_year, run_end_month, monthlen(run_end_year, run_end_month)))
 
 
-			era_interim_df = pd.read_csv('../Data/Meteorological/Forcing_Data/eraInterim_bias_corrected.csv', parse_dates=[0,])   #It is actually a hindcast, not a forecast, but anywhoo..
-			era_interim_df = era_interim_df.rename(columns={'Unnamed: 0': 'Date'})
-			warmup_mask = (era_interim_df['Date'] >= '%d-%d-%d' % (warmup_start_year, warmup_start_month, 1)) & (era_interim_df['Date'] <= '%d-%d-%d' % (warmup_end_year, warmup_end_month, monthlen(warmup_end_year, warmup_end_month)))   #TODO: Check inclusivity of last date..
-			era_interim_df = era_interim_df[warmup_mask]
-			era_interim_df['Date'] = [date.replace(hour=12) for date in era_interim_df['Date']]
+			era_5_df = pd.read_csv('../Data/Meteorological/06_era5/era5_morsa_1980-2019_daily.csv', parse_dates=[0,])
 
-			scenario_df = pd.read_csv('../Data/Meteorological/Forcing_Data/era_system4_%s_bias_corrected.csv' % season, parse_dates=[0,])
-			scenario_df = scenario_df.rename(columns={'Unnamed: 0': 'Date'})	
-			run_mask = (scenario_df['Date'] >= '%d-%d-%d' % (run_start_year, run_start_month, 1)) & (scenario_df['Date'] <= '%d-%d-%d' % (run_end_year, run_end_month, monthlen(run_end_year, run_end_month)))
-			scenario_df = scenario_df[run_mask]
-			scenario_df['Date'] = [date.replace(hour=12) for date in scenario_df['Date']]
+			#era_interim_df = era_interim_df.rename(columns={'Unnamed: 0': 'Date'})
+			warmup_mask = (era_5_df['dates'] >= '%d-%d-%d' % (warmup_start_year, warmup_start_month, 1)) & (era_5_df['dates'] <= '%d-%d-%d' % (warmup_end_year, warmup_end_month, monthlen(warmup_end_year, warmup_end_month)))   #TODO: Check inclusivity of last date..
+			era_5_df = era_5_df[warmup_mask]
+			era_5_df['dates'] = [date.replace(hour=12) for date in era_5_df['dates']]
 
-			for scenario_idx in range(0, 15) :
-			#for scenario_idx in range(0, 1):
+			for scenario_idx in range(1, 25) : #range(1,26):
+				scenario_df = pd.read_csv('../Data/Meteorological/07_s5_seasonal/s5_morsa_gotm_merged_%s_member%02d_bc.csv' % (season, scenario_idx), parse_dates=[0,])
+				#scenario_df = scenario_df.rename(columns={'Unnamed: 0': 'Date'})	
+				run_mask = (scenario_df['dates'] >= '%d-%d-%d' % (run_start_year, run_start_month, 1)) & (scenario_df['dates'] <= '%d-%d-%d' % (run_end_year, run_end_month, monthlen(run_end_year, run_end_month)))
+				scenario_df = scenario_df[run_mask]
+				scenario_df['dates'] = [date.replace(hour=12) for date in scenario_df['dates']]
+
 				
-				run_df = scenario_df.rename(columns = {
-					'uas_%d' % scenario_idx : 'uas',
-					'vas_%d' % scenario_idx : 'vas',
-					'ps_%d'  % scenario_idx : 'ps',
-					'tas_%d' % scenario_idx : 'tas',
-					'pr_%d'  % scenario_idx : 'pr',
-					'rsds_%d' % scenario_idx : 'rsds',
-					'rlds_%d' % scenario_idx : 'rlds',
-					'hurs_%d' % scenario_idx : 'hurs',
-					'cc_%d'   % scenario_idx : 'cc',
-				})
-				
-				df = pd.concat([era_interim_df, run_df], )
+				df = pd.concat([era_5_df, scenario_df], )
 
 				#print(df)
 
@@ -213,31 +204,32 @@ def full_scenario_run(dataset) :
 
 				run_single_coupled_model_with_input(dataset, 'store_%s.nc' % name, 'vanem_%s.nc' % name, df)
 
-def single_eraInterim_run(dataset) :
+
+
+
+def single_era5_run(dataset) :
 	
-	df = pd.read_csv('../Data/Meteorological/Forcing_Data/eraInterim_bias_corrected.csv', parse_dates=[0,])
+	df = pd.read_csv('../Data/Meteorological/06_era5/era5_morsa_1980-2019_daily.csv', parse_dates=[0,])
 
-	df = df.rename(columns={'Unnamed: 0': 'Date'})
-
-	df['Date'] = [date.replace(hour=12) for date in df['Date']]
-
-	mask = (df['Date'] >= '1981-1-1') & (df['Date'] <= '2011-1-1')   #NOTE: The last date is non-inclusive, but I have no idea why ( I use <= .... )
-	df = df.loc[mask]
+	#era_interim_df = era_interim_df.rename(columns={'Unnamed: 0': 'Date'})
+	mask = (df['dates'] >= '1993-1-1') & (df['dates'] <= '2019-2-28')   #TODO: Check inclusivity of last date..
+	df = df[mask]
+	df['dates'] = [date.replace(hour=12) for date in df['dates']]
 
 	elevation_coeff = 0.0065*100
 	
 	#correct atmospheric pressure for elevation and temperature
-	df['ps'] = df['ps']*(1.0 - elevation_coeff / (df['tas'] + 273.15 + elevation_coeff))**(-5.257)	
+	#df['ps'] = df['ps']*(1.0 - elevation_coeff / (df['tas'] + 273.15 + elevation_coeff))**(-5.257)	
 
-	run_single_coupled_model_with_input(dataset, 'store_full_eraInterim.nc', 'vanem_full_eraInterim.nc', df)
+	run_single_coupled_model_with_input(dataset, 'store_full_era5.nc', 'vanem_full_era5.nc', df)
 
 
 
-dataset = wr.DataSet.setup_from_parameter_and_input_files('SimplyQ/mobius_vansjo_parameters_ddet.dat', 'SimplyQ/mobius_vansjo_inputs.dat')  #Use degree-day-evapotranspiration. It is as good as Thornthwaite, and unlike Thornthwaite it gets properly recomputed if you re-run the same dataset with new inputs.
+dataset = wr.DataSet.setup_from_parameter_and_input_files('SimplyQ/vansjo_parameters_era5.dat', 'SimplyQ/MorsaInputs_era5.dat')  #Use degree-day-evapotranspiration. It is as good as Thornthwaite, and unlike Thornthwaite it gets properly recomputed if you re-run the same dataset with new inputs.
 
 #run_single_coupled_model(dataset, 'store', 'vanem', 'store.nc', 'vanem.nc')
-#full_scenario_run(dataset)
-single_eraInterim_run(dataset)
+full_scenario_run(dataset)
+#single_era5_run(dataset)
 
 
 			
