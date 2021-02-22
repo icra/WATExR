@@ -31,7 +31,7 @@
 /
 &time
    timefmt = 2
-   start = '2014-06-01 00:00:00'
+   start = '1980-06-01 00:00:00'
    stop = '2018-03-06 00:00:00'
    dt = 3600
    timezone = 0
@@ -62,7 +62,7 @@
    cloud_mode = 4
    fetch_mode = 0
    subdaily = .false.
-   meteo_fl = 'meteo_ERA5.csv'
+   meteo_fl = 'meteo_file.csv'
    wind_factor = 1.37
    sw_factor = 1
    lw_factor = 1
@@ -92,28 +92,25 @@
    Kw = 1.5
 /
 &inflow
-   num_inflows = 2
-   names_of_strms = 'Onka+Pipe','Echunga'
-   subm_flag = .false., .false.
-   strm_hf_angle = 79.6, 77.6
-   strmbd_slope = 0.33, 0.47
-   strmbd_drag = 0.015, 0.015
-   inflow_factor = 1, 1
-   inflow_fl = 'inflow.csv','echunga_ERA5_GR4J_flow_1980_2019.csv'
-   inflow_varnum = 2, 2
-   inflow_vars = 'FLOW','TEMP'
+   num_inflows = 3
+   names_of_strms = 'Onka','Echunga','Pipe'
+   subm_flag = .false.
+   strm_hf_angle = 77.6
+   strmbd_slope = 0.47
+   strmbd_drag = 0.015
+   inflow_factor = 1
+   inflow_fl = 'onka_ERA5_GR4J_flow_1980_2019.csv','echunga_ERA5_GR4J_flow_1980_2019.csv','pipe_inflow.csv'
+   inflow_varnum = 1,1,1
+   inflow_vars = 'FLOW'
 /
 &outflow
    num_outlet = 1
    flt_off_sw = .false.
-   outl_elvs = 202
-   bsn_len_outl = 3678
-   bsn_wid_outl = 944
+   outl_elvs = 208
+   bsn_len_outl = 5
+   bsn_wid_outl = 5
    outflow_fl = 'outflow.csv'
-   outflow_factor = 1
-   outflow_thick_limit = 1
-   outlet_type = 1
-   single_layer_draw = .true.
+   outflow_factor = 0.7
    crest_width = 100
    crest_factor = 0.61
 /

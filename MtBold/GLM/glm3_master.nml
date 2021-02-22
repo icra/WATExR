@@ -62,7 +62,7 @@
    cloud_mode = 4
    fetch_mode = 0
    subdaily = .false.
-   meteo_fl = 'meteo_ERA5.csv'
+   meteo_fl = 'meteo_file.csv'
    wind_factor = 1.37
    sw_factor = 1
    lw_factor = 1
@@ -92,21 +92,21 @@
    Kw = 1.5
 /
 &inflow
-   num_inflows = 2
-   names_of_strms = 'Onka+Pipe','Echunga'
-   subm_flag = .false., .false.
-   strm_hf_angle = 79.6, 77.6
-   strmbd_slope = 0.33, 0.47
-   strmbd_drag = 0.015, 0.015
-   inflow_factor = 1, 1
-   inflow_fl = 'inflow.csv','echunga_ERA5_GR4J_flow_1980_2019.csv'
-   inflow_varnum = 2, 2
-   inflow_vars = 'FLOW','TEMP'
+   num_inflows = 0
+   names_of_strms = 'Onka'
+   subm_flag = .false.
+   strm_hf_angle = 77.6
+   strmbd_slope = 0.47
+   strmbd_drag = 0.015
+   inflow_factor = 1
+   inflow_fl = 'onka_1973_2018_1day.csv'
+   inflow_varnum = 1
+   inflow_vars = 'FLOW'
 /
 &outflow
-   num_outlet = 1
+   num_outlet = 0
    flt_off_sw = .false.
-   outl_elvs = 202
+   outl_elvs = 209
    bsn_len_outl = 3678
    bsn_wid_outl = 944
    outflow_fl = 'outflow.csv'
