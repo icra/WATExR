@@ -6,7 +6,8 @@
 #' @param pet numeric;  time series of potential evapotranspiration (catchment average) [mm/time step], required to create the GR model inputs
 #' @param pre  time series of total precipitation (catchment average) [mm/time step], required to create the GR model inputs
 #' @param airt numeric; time series of mean air temperature [°C], required to calculate temperature. Only require if calc_T = TRUE
-#' @param warmup_ratio numeric; Double of the ratio between warmup and run period, default is 1 which refers to warm up:run 1:1, 2 would mean that warm up:run would be 2:1. If NULL no warm up is used. Defaults to NULL
+#' @param warmup_unit string; identifying the time unit of the warm-up period. Can be "year", "month" or "day"
+#' @param warmup_n numeric; number of specified warm-up units to be used in the warmup
 #' @param param numeric; vector of 4 parameters
 #' GR4J X1	production store capacity [mm]
 #' GR4J X2	intercatchment exchange coefficient [mm/d]
@@ -18,6 +19,7 @@
 #' water_temp = 5.0 + 0.75 * air_temp
 #' from Stefan, H.G. and E.B. Preudíhomme. 1993. Stream temperature estimation from air temperature. Water Resources Bulletin 29(1): 27-45
 #' @param vector boolean; return a vector of discharge [m.3.s-1]. Default = TRUE
+#' @param model character; must be either "GOTM" or "GLM"
 #' @examples time = as.POSIXct(met[,1], tz = 'UTC)
 #' airt = met$tas_degC
 #' pre = met$pr_mm
@@ -27,22 +29,28 @@
 #' catch_size <- 214.7
 #' @import airGR
 #' @export
-
-run_gr4j <- function(time, pet, pre, airt = NULL, warmup_ratio = NULL, param, catch_size, out_file, calc_T = FALSE, vector = TRUE){
+run_gr4j <- function(time, pet, pre, airt = NULL, warmup_unit = NULL, warmup_n = NULL, param, catch_size, out_file, calc_T = FALSE, vector = TRUE, model = NULL){
   
   inputs <- CreateInputsModel(RunModel_GR4J, DatesR = time, Precip = pre, PotEvap = pet)
-  if(is.null(warmup_ratio)){
+  if(is.null(warmup_unit) | is.null(warmup_n)){
     opts <- CreateRunOptions(RunModel_GR4J, InputsModel = inputs,IndPeriod_Run = 1:length(time),IndPeriod_WarmUp = NULL)
   }else{
     start = time[1]
     stop = time[length(time)]
-    dur <-  stop - start
-    interval <- dur/(warmup_ratio + 1)
-    start1 <- start
-    stop1 <- start1 + interval
-    warmup_ind = 1:length(time[time < stop1])
     
-    run_ind = (length(time[time < stop1])+1):length(time)
+    if(warmup_unit == 'year'){
+      stop2 = start %m+% years(warmup_n)
+    }
+    if(warmup_unit == 'month'){
+      stop2 = start %m+% months(warmup_n)
+    }
+    if(warmup_unit == 'day'){
+      stop2 = start %m+% days(warmup_n)
+    }
+    
+    warmup_ind = 1:length(time[time < stop2])
+    
+    run_ind = (length(time[time < stop2])+1):length(time)
     opts <- CreateRunOptions(RunModel_GR4J, InputsModel = inputs,IndPeriod_Run = run_ind, IndPeriod_WarmUp = warmup_ind)
   }
   
@@ -57,21 +65,35 @@ run_gr4j <- function(time, pet, pre, airt = NULL, warmup_ratio = NULL, param, ca
   # Q (mm/day) = Q(m^3/s) *1000*24*3600/ Area (m^2)
   # Q (mm/day) * Area (m^2) = Q(m^3/s) *1000*24*3600
   # Q (mm/day) * Area (m^2) /(1000*24*3600) = Q(m^3/s) 
-  qdf$flow <- (qdf[,2] * catch_size *1000000)/(1000*60*60*24)
+  qdf$flow <- (qdf[,2] * catch_size *1e6)/(1000*60*60*24)
   
   flow <- qdf[,c(1,3)]
   colnames(flow) <- c('!DateTime', 'Q_m.3.s.1')
   if(calc_T){
     
-    flow$T_degC = 5.0 + 0.75 * airt #Stefan, H.G. and E.B. Preudíhomme. 1993. Stream temperature estimation from air temperature. Water Resources Bulletin 29(1): 27-45
-    
+    if(is.null(warmup_unit) | is.null(warmup_n)){
+      flow$T_degC = 5.0 + 0.75 * airt #Stefan, H.G. and E.B. Preudíhomme. 1993. Stream temperature estimation from air temperature. Water Resources Bulletin 29(1): 27-45
+    }else{
+      flow$T_degC = 5.0 + 0.75 * airt[run_ind] 
+    }
   }
   
   flow[,1] <- format(flow[,1], '%Y-%m-%d %H:%M:%S')
-  write.table(flow, out_file, row.names = F, col.names = T, quote = F, sep = '\t')
+  
+  if( model == 'GOTM' ) {
+    write.table(flow, out_file, row.names = F, col.names = T, quote = F, sep = '\t')
+  }else if( model == "GLM") {
+    if(calc_T){
+      colnames(flow) <- c('Time', 'FLOW', 'TEMP')
+    } else {
+      colnames(flow) <- c('Time', 'FLOW')
+    }
+    write.csv(flow, out_file, row.names = F, quote = F)
+    
+  }
   message('Create discharge file: ', out_file)
   if(vector){
-    flow[,1] <- as.POSIXct(flow[,1])
+    flow[,1] <- as.POSIXct(flow[,1], tz = 'UTC')
     return(flow[,1:2])
   }
 }

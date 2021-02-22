@@ -8,7 +8,7 @@
 #' @param month numeric;select a month if you want to use an 'average profile from a particular month. Defaults to NULL.
 #' @param ndeps numeric; number of depths to extract from the monthly average profile. Defaults to 2 (surface and bottom)
 #' @param btm_depth numeric; Depth to extract the bottom temperature from, must be negative. If none provided uses the max depth in the observed file. Defaults to NULL
-#' @param print logical; Prints the temperature profile to the con
+#' @param print logical; Prints the temperature profile to the console
 #' @param ... arguments to be passed to read.delim() for reading in observed file e.g "header = TRUE, sep = ','"
 #' @return Message stating if the file has been created
 #' @import utils

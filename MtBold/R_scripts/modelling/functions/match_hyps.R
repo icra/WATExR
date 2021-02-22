@@ -4,7 +4,8 @@
 #'
 #' @param in_file filepath; File which contains the input data which has two columns; year day and lake level
 #' @param out_file filepath; File which is to be written with prescribed level.
-#' @examples in_file = 'hypsograph.dat'
+#' @examples 
+#' in_file = 'hypsograph.dat'
 #' out_file = 'norm_hypsograph.dat'
 #' lake_level = 35.4
 #' match_hyps(in_file, out_file, lake_level)
