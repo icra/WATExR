@@ -32,10 +32,25 @@ variables <- c("ech_q", "onk_q", "surftemp", "bottemp")
 list.files(dir.Rdata, pattern = paste0(obs.dataset, "_.*", paste0(variables, collapse = "_")), full.names = TRUE)
 obs.data <- get(load("C:\\Users\\mooret\\OneDrive - Dundalk Institute of Technology\\WateXr\\WATExR\\MtBold\\Rdata\\EWEMBI_GR4J_GOTM_1_2_3_4_5_6_7_8_9_10_11_12_ech_q_onk_q_surftemp_bottemp.rda"))
 
+# Example
+exa <- obs.data$ech_q
+meta <- list('station_id' = 'Ech', 'name' = 'Ech', 'altitude' = 240, 'source' = 'UDG')
+exa = c(exa, list('Metadata' = meta))
+
+
+loadeR.2nc::stations2nc(exa, NetCDFOutFile = "C:\\Users\\mooret\\OneDrive - Dundalk Institute of Technology\\WateXr\\WATExR\\MtBold\\data/output/obs.nc4", )
+
+grid2nc_tm(obs.data, NetCDFOutFile = "C:\\Users\\mooret\\OneDrive - Dundalk Institute of Technology\\WateXr\\WATExR\\MtBold\\data/output/obs_grid.nc4")
+grid2nc_tm(obs.data$ech_q, NetCDFOutFile = "C:\\Users\\mooret\\OneDrive - Dundalk Institute of Technology\\WateXr\\WATExR\\MtBold\\data/output/obs_ech.nc4")
+
+
 # Repeat the operation for forecast data
 list.files(dir.Rdata, pattern = paste0(forecast.dataset, "_.*", paste0(variables, collapse = "_")), full.names = TRUE)
 forecast.data <- get(load("C:\\Users\\mooret\\OneDrive - Dundalk Institute of Technology\\WateXr\\WATExR\\MtBold\\Rdata\\System4_GR4J_GOTM_2_3_4_5_ech_q_onk_q_surftemp_bottemp.rda")) 
 forecast.data <- lapply(forecast.data, function(x) subsetGrid(x, season = getSeason(x)[-1]))
+
+grid2nc_tm(forecast.data, NetCDFOutFile = "C:\\Users\\mooret\\OneDrive - Dundalk Institute of Technology\\WateXr\\WATExR\\MtBold\\data/output/fcast.nc4")
+fc <- loadGridData("C:\\Users\\mooret\\OneDrive - Dundalk Institute of Technology\\WateXr\\WATExR\\MtBold\\data/output/fcast.nc4", var = 'surftemp')
 
 ###### TRANSFORMATION -----------------------------------------------------------------------
 # Select variables for validation
