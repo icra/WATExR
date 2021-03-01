@@ -13,7 +13,7 @@ end
 files(id) = [];
 
 [~,name,~]=fileparts(pwd);
-if name == 'Vansjo'
+if contains(name,'Vansj')
     del = ';';
 else
     del = ',';
