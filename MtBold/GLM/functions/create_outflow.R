@@ -6,7 +6,13 @@ create_outflow <- function(glm_nml, matrix_file, index = 1){
   df <- data.frame(date = date, yday = lubridate::yday(date))
   
   with <- read.csv(matrix_file)
-  with <- with[,c(1,(1+index))]
+  if(index == 'mean'){
+    mn = apply(with[,-1], 1, mean)
+    with <- cbind(with[,1], mn)
+    colnames(with)[1] <- 'yday'
+  }else{
+    with <- with[,c(1,(1+index))]
+  }
   
   df2 <- merge(df, with, by = 'yday')
   df2 <- df2[order(df2$date), ]
@@ -15,6 +21,7 @@ create_outflow <- function(glm_nml, matrix_file, index = 1){
   colnames(df2) <- c('Time', 'FLOW')
   write.csv(df2, 'outflow.csv', row.names = F, quote = F)
   
+  glm_nml <- glmtools::set_nml(glm_nml, 'num_outlet', 1)
   glm_nml <- glmtools::set_nml(glm_nml, 'outflow_fl', 'outflow.csv')
   return(glm_nml)
 }
