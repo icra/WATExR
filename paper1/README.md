@@ -1,4 +1,4 @@
-***Supporting information for the paper Seasonal Forecasting to Watershed-Lake System submitted to Water Research Journal**
+**Supporting information for the paper Seasonal Forecasting to Watershed-Lake System submitted to Water Research Journal**
 
 You will find 4 folders related to the 4 catchment-lake systems used in this paper:
 
